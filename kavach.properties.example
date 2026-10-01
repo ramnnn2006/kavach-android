@@ -1,0 +1,4 @@
+# Copy to kavach.properties (git-ignored) and fill in.
+# Only the project URL and the PUBLISHABLE key. Never the secret / service_role key.
+supabase.url=https://YOUR-PROJECT.supabase.co
+supabase.publishableKey=sb_publishable_...
