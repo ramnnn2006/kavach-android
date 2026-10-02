@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mirrors kavach-app/src/styles/tokens.css (bg, primary, red tokens) -->
+    <color name="window_background">#F2F2F7</color>
+    <color name="brand">#0062CC</color>
+    <color name="notification_emergency">#D3281E</color>
+    <color name="notification_accent">#0062CC</color>
+</resources>

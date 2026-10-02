@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="window_background">#000000</color>
+    <color name="brand">#0A84FF</color>
+    <color name="notification_emergency">#FF453A</color>
+    <color name="notification_accent">#0A84FF</color>
+</resources>
