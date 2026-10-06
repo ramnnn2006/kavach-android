@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Shared strings. Prefixes: app_, common_, nav_, auth_err_.
+  Each feature area has its own file and prefix:
+    strings_shared.xml (shared_), strings_resident.xml (resident_), strings_responder.xml (responder_),
+    strings_admin.xml (admin_), strings_alerts.xml (alerts_).
+  Wording matches kavach-app/src/i18n/strings/*.js (en blocks). Placeholders use %1$s / %1$d.
+-->
+<resources>
+    <string name="app_name">Kavach</string>
+
+    <!-- Common actions -->
+    <string name="common_loading">Loading…</string>
+    <string name="common_retry">Try again</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_dismiss">Dismiss</string>
+    <string name="common_confirm">Confirm</string>
+    <string name="common_save">Save</string>
+    <string name="common_saved">Saved</string>
+    <string name="common_back">Back</string>
+    <string name="common_close">Close</string>
+    <string name="common_call">Call</string>
+    <string name="common_call_number">Call %1$s</string>
+    <string name="common_done">Done</string>
+    <string name="common_edit">Edit</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_more">More</string>
+
+    <!-- Time -->
+    <string name="common_just_now">Just now</string>
+    <string name="common_min_ago">%1$d min ago</string>
+    <string name="common_h_ago">%1$d h ago</string>
+    <string name="common_d_ago">%1$d d ago</string>
+    <string name="common_minutes">%1$d min</string>
+    <string name="common_hours">%1$d h</string>
+    <string name="common_hours_minutes">%1$d h %2$d min</string>
+    <string name="common_duration_none">–</string>
+
+    <!-- Connection -->
+    <string name="common_offline">You\'re offline. Reports will be sent when you reconnect.</string>
+    <string name="common_offline_short">Offline</string>
+
+    <!-- Errors (db.js errorMessage) -->
+    <string name="common_error_generic">Something went wrong. Try again.</string>
+    <string name="common_error_invalid">That can\'t be done right now. Refresh and try again.</string>
+    <string name="common_error_offline">No connection. Check your internet and try again.</string>
+    <string name="common_error_forbidden">You don\'t have permission to do that.</string>
+    <string name="common_error_not_found">That item doesn\'t exist any more.</string>
+    <string name="common_err_closed">This alert is already closed.</string>
+    <string name="common_err_stale">Someone already updated this alert. Refresh to see the latest.</string>
+    <string name="common_err_location">Choose where it is happening.</string>
+    <string name="common_err_choose_tower">Choose a tower.</string>
+    <string name="common_err_own_admin">You can\'t remove your own admin role.</string>
+    <string name="common_err_check_ended">This Safety Check has ended.</string>
+    <string name="common_err_flat_tower">That flat number belongs to another tower.</string>
+    <string name="common_err_flat_number">Enter a valid flat number.</string>
+    <string name="common_err_message">Write a message (up to 300 characters).</string>
+    <string name="common_err_medical_only">This medical alert is no longer active.</string>
+    <string name="common_err_already_claimed">Someone else already took this alert</string>
+    <string name="common_err_not_on_duty">Turn on duty first to take alerts</string>
+    <string name="common_err_wrong_specialty">This alert isn\'t in your specialty</string>
+    <string name="common_err_phone_number">Enter a valid phone number.</string>
+    <string name="common_err_phone_taken">This phone number is already on the list.</string>
+    <string name="common_err_name_required">Enter a name.</string>
+    <string name="common_err_member_flat">Residents need a tower and flat number.</string>
+
+    <!-- Auth errors (AuthRepository) -->
+    <string name="auth_err_wrong_password">Wrong email or password.</string>
+    <string name="auth_err_email_not_confirmed">Confirm your email first, then sign in.</string>
+    <string name="auth_err_not_approved">This number isn\'t on your society\'s list. Ask the committee to add you.</string>
+    <string name="auth_err_invalid_code">That code is wrong or has expired. Try again or ask for a new code.</string>
+    <string name="auth_err_invalid_phone">Enter a valid mobile number.</string>
+    <string name="auth_err_rate_limited">Too many attempts. Wait a minute and try again.</string>
+
+    <!-- Incident types -->
+    <string name="common_type_lift">Lift stuck</string>
+    <string name="common_type_fire">Fire or smoke</string>
+    <string name="common_type_medical">Medical emergency</string>
+    <string name="common_type_water">Water problem</string>
+    <string name="common_type_power">Power problem</string>
+    <string name="common_type_security">Security</string>
+    <string name="common_type_short_lift">Lift</string>
+    <string name="common_type_short_fire">Fire</string>
+    <string name="common_type_short_medical">Medical</string>
+    <string name="common_type_short_water">Water</string>
+    <string name="common_type_short_power">Power</string>
+    <string name="common_type_short_security">Security</string>
+    <string name="common_type_hint_lift">Someone is trapped or the lift stopped between floors</string>
+    <string name="common_type_hint_fire">Fire, smoke, burning smell, gas leak</string>
+    <string name="common_type_hint_medical">Fall, chest pain, breathing trouble, unconscious</string>
+    <string name="common_type_hint_water">No water, leak, overflow, sump problem</string>
+    <string name="common_type_hint_power">Outage, sparking, DG not starting</string>
+    <string name="common_type_hint_security">Intruder, fight, suspicious activity</string>
+
+    <!-- Statuses: resident wording -->
+    <string name="common_status_pending">Waiting</string>
+    <string name="common_status_acknowledged">Accepted</string>
+    <string name="common_status_en_route">On the way</string>
+    <string name="common_status_on_scene">Help arrived</string>
+    <string name="common_status_resolved">Resolved</string>
+    <string name="common_status_cancelled">Cancelled</string>
+    <!-- Statuses: staff wording -->
+    <string name="common_staff_status_pending">Open</string>
+    <string name="common_staff_status_acknowledged">Claimed</string>
+    <string name="common_staff_status_en_route">En route</string>
+    <string name="common_staff_status_on_scene">On scene</string>
+    <string name="common_staff_status_resolved">Resolved</string>
+    <string name="common_staff_status_cancelled">Cancelled</string>
+    <!-- Next-step buttons (NEXT_STATUS) -->
+    <string name="common_action_on_my_way">On my way</string>
+    <string name="common_action_reached">I\'ve reached</string>
+    <string name="common_action_resolve">Mark resolved</string>
+    <string name="common_action_claim">Claim</string>
+
+    <!-- Roles, teams, skills -->
+    <string name="common_role_resident">Resident</string>
+    <string name="common_role_responder">Responder</string>
+    <string name="common_role_admin">Admin</string>
+    <string name="common_preset_maintenance">Maintenance</string>
+    <string name="common_preset_security">Security</string>
+    <string name="common_no_specialties">No specialty set</string>
+    <string name="common_all_specialties">All specialties</string>
+    <string name="common_skill_doctor">Doctor</string>
+    <string name="common_skill_nurse">Nurse</string>
+    <string name="common_skill_paramedic">Paramedic</string>
+    <string name="common_skill_first_aid">First aid</string>
+
+    <!-- Vulnerability -->
+    <string name="common_vuln_elderly">Elderly</string>
+    <string name="common_vuln_mobility">Limited mobility</string>
+    <string name="common_vuln_medical_device">Uses a medical device</string>
+    <string name="common_vuln_infant">Infant at home</string>
+
+    <!-- Places and people -->
+    <string name="common_phone">Phone</string>
+    <string name="common_email">Email</string>
+    <string name="common_name">Name</string>
+    <string name="common_home">Home</string>
+    <string name="common_tower">Tower</string>
+    <string name="common_flat">Flat</string>
+    <string name="common_flat_n">Flat %1$s</string>
+    <string name="common_floor">Floor</string>
+    <string name="common_floor_n">Floor %1$d</string>
+    <string name="common_ground_floor">Ground</string>
+    <!-- Resident place lines (resident/parts/format.js floorLabel) -->
+    <string name="common_ground_floor_resident">Ground floor</string>
+    <string name="common_place_unknown">Place not given</string>
+    <string name="common_people">People</string>
+    <plurals name="common_people_count">
+        <item quantity="one">1 person</item>
+        <item quantity="other">%1$d people</item>
+    </plurals>
+    <string name="common_urgency_n">Urgency %1$d</string>
+    <string name="common_escalated_level">Escalated · level %1$d</string>
+    <string name="common_emergency_112">Emergency 112</string>
+    <string name="common_call_security">Call security desk</string>
+    <string name="common_version">Version %1$s</string>
+
+    <!-- Equipment -->
+    <string name="common_asset_kind_lift">Lift</string>
+    <string name="common_asset_kind_dg">DG set</string>
+    <string name="common_asset_kind_water_pump">Water pump</string>
+    <string name="common_asset_kind_fire_pump">Fire pump</string>
+    <string name="common_asset_kind_sump">Sump</string>
+    <string name="common_asset_kind_transformer">Transformer</string>
+    <string name="common_asset_state_ok">Working</string>
+    <string name="common_asset_state_degraded">Partly working</string>
+    <string name="common_asset_state_down">Not working</string>
+    <string name="common_asset_state_maintenance">Under maintenance</string>
+    <string name="common_compliance_overdue">Overdue</string>
+    <string name="common_compliance_due_soon">Due soon</string>
+    <string name="common_compliance_ok">Up to date</string>
+
+    <!-- Power -->
+    <string name="common_tier_p1">Never cut</string>
+    <string name="common_tier_p2">Cut last</string>
+    <string name="common_tier_p3">Rotate</string>
+    <string name="common_tier_p4">Cut first</string>
+    <string name="common_power_on">On</string>
+    <string name="common_power_rotating">Rotating</string>
+    <string name="common_power_off">Off</string>
+    <string name="common_power_source_grid">Grid power</string>
+    <string name="common_power_source_dg">DG (backup) power</string>
+
+    <!-- Timeline events -->
+    <string name="common_event_created">Reported</string>
+    <string name="common_event_claimed">Accepted by %1$s</string>
+    <string name="common_event_status_changed">%1$s</string>
+    <string name="common_event_assigned">Assigned to %1$s</string>
+    <string name="common_event_reassigned">Reassigned to %1$s</string>
+    <string name="common_event_escalated">Escalated to level %1$d</string>
+    <string name="common_event_cancelled">Cancelled</string>
+    <string name="common_event_resolved">Resolved</string>
+    <string name="common_event_note_added">Note added</string>
+    <string name="common_event_details_updated">Details updated</string>
+    <string name="common_event_first_responder_ack">A first responder is coming</string>
+    <string name="common_event_by">by %1$s</string>
+
+    <!-- Progress steps: state read by TalkBack -->
+    <string name="common_step_done">Done</string>
+    <string name="common_step_current">Next step</string>
+    <string name="common_step_not_yet">Not yet</string>
+    <string name="common_system">Kavach</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_reports">Reports</string>
+    <string name="nav_notices">Notices</string>
+    <string name="nav_contacts">Contacts</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_alerts">Alerts</string>
+    <string name="nav_checks">Checks</string>
+    <string name="nav_assets">Assets</string>
+    <string name="nav_history">History</string>
+    <string name="nav_overview">Overview</string>
+    <string name="nav_incidents">Incidents</string>
+    <string name="nav_team">Team</string>
+    <string name="nav_society">Society</string>
+    <string name="nav_more">More</string>
+    <string name="nav_insights">Reports</string>
+    <string name="nav_members">Members</string>
+    <string name="nav_safety_check">Safety Check</string>
+    <string name="nav_board">Command board</string>
+</resources>
