@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Staff incident detail and profile additions. Prefix: shared_d_.
+  Wording from kavach-app/src/i18n/strings/responder.js (en block).
+-->
+<resources>
+    <!-- Timeline: older items collapse (Timeline.jsx) -->
+    <string name="shared_d_show_all">Show all (%1$d)</string>
+    <string name="shared_d_show_less">Show less</string>
+
+    <!-- Assign dialog: how many active alerts the responder already has -->
+    <string name="shared_d_active_load">%1$d active</string>
+    <string name="shared_d_team_status_load">%1$s · %2$s · %3$s</string>
+</resources>
