@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Shared screens (splash, login, setup, welcome, profile, incident detail). Prefix: shared_.
+  Wording comes from kavach-app/src/i18n/strings/{auth,profile,common,responder}.js (en blocks);
+  the phone sign-in parts are new and written in plain English.
+-->
+<resources>
+    <!-- Splash / general -->
+    <string name="shared_tagline">Emergency help for your apartment society</string>
+    <string name="shared_log_out">Log out</string>
+    <string name="shared_open_settings">Open settings</string>
+    <string name="shared_splash_logout_text">You will need to sign in again. Reports on this phone that have not been sent yet will be deleted.</string>
+
+    <!-- Login -->
+    <string name="shared_login_not_configured">This app is not connected to a database yet.</string>
+    <string name="shared_login_phone_title">Sign in with your phone</string>
+    <string name="shared_login_phone_text">We will text a 6-digit code to your mobile number.</string>
+    <string name="shared_login_phone_label">Mobile number</string>
+    <string name="shared_login_phone_note">Only numbers added by your society committee can sign in.</string>
+    <string name="shared_login_send_code">Send code</string>
+    <string name="shared_login_code_title">Enter the code</string>
+    <string name="shared_login_code_sent">We sent a 6-digit code to %1$s.</string>
+    <string name="shared_login_code_label">6-digit code</string>
+    <string name="shared_login_verify">Verify and sign in</string>
+    <string name="shared_login_resend">Send a new code</string>
+    <string name="shared_login_resend_in">Send a new code in %1$d s</string>
+    <string name="shared_login_code_resent">A new code is on its way.</string>
+    <string name="shared_login_change_number">Change number</string>
+    <string name="shared_login_use_email">Use email instead</string>
+    <string name="shared_login_use_phone">Use phone number instead</string>
+    <string name="shared_login_email_title">Sign in with email</string>
+    <string name="shared_login_password">Password</string>
+    <string name="shared_login_show_password">Show password</string>
+    <string name="shared_login_hide_password">Hide password</string>
+    <string name="shared_login_sign_in">Sign in</string>
+    <string name="shared_login_forgot">Forgot password?</string>
+    <string name="shared_login_err_email_required">Email is required.</string>
+    <string name="shared_login_err_email_invalid">Enter a valid email address.</string>
+    <string name="shared_login_err_password_required">Password is required.</string>
+    <string name="shared_login_enter_email_first">Enter your email address first.</string>
+    <string name="shared_login_reset_sent">Reset link sent to %1$s</string>
+    <string name="shared_login_staff_note">Staff and committee accounts are set up by your society admin.</string>
+
+    <!-- First-run setup -->
+    <string name="shared_setup_title">Set up this phone</string>
+    <string name="shared_setup_text">Kavach sends emergency alerts to this phone. Two settings help them arrive on time, even when the app is closed.</string>
+    <string name="shared_setup_notif_title">Notifications</string>
+    <string name="shared_setup_notif_text">Needed for emergency alerts and updates on your reports.</string>
+    <string name="shared_setup_notif_allow">Allow notifications</string>
+    <string name="shared_setup_notif_on">Notifications are on</string>
+    <string name="shared_setup_notif_blocked">Notifications are blocked. Turn them on in your phone settings.</string>
+    <string name="shared_setup_battery_title">Keep Kavach running</string>
+    <string name="shared_setup_battery_text">Some phones stop apps in the background to save battery. Excluding Kavach helps alerts arrive.</string>
+    <string name="shared_setup_battery_exclude">Exclude Kavach</string>
+    <string name="shared_setup_battery_on">Kavach is excluded from battery saving</string>
+    <string name="shared_setup_honest">Even then, some phones may still stop background apps. If alerts stop arriving, check your phone\'s battery settings.</string>
+    <string name="shared_setup_continue">Continue</string>
+    <string name="shared_setup_skip">Skip for now</string>
+
+    <!-- Welcome (choose home) -->
+    <string name="shared_welcome_title">Where do you live?</string>
+    <string name="shared_welcome_text">Guards use this to reach you fast.</string>
+    <string name="shared_welcome_choose_tower">Choose your tower</string>
+    <string name="shared_welcome_choose_floor">Choose your floor</string>
+    <string name="shared_welcome_flat_number">Flat number</string>
+    <string name="shared_welcome_flat_hint">For example 1204</string>
+    <string name="shared_welcome_save">Continue</string>
+    <string name="shared_welcome_saved">Home saved</string>
+    <string name="shared_welcome_err_tower">Choose your tower.</string>
+    <string name="shared_welcome_err_flat">Enter your flat number.</string>
+    <string name="shared_welcome_no_society">Your account isn\'t linked to a society yet. Ask your society admin to add you.</string>
+    <string name="shared_welcome_no_towers">No towers have been set up yet. Ask your society admin.</string>
+
+    <!-- Profile -->
+    <string name="shared_profile_section_personal">Personal</string>
+    <string name="shared_profile_phone_hint">Used to call you back about a report.</string>
+    <string name="shared_profile_no_email">No email</string>
+    <string name="shared_profile_name_required">Enter your name.</string>
+    <string name="shared_profile_name_too_long">Keep your name under 80 characters.</string>
+    <string name="shared_profile_phone_invalid">Enter a 10-digit mobile number.</string>
+    <string name="shared_profile_save_changes">Save changes</string>
+    <string name="shared_profile_home_none">No flat added yet</string>
+
+    <string name="shared_profile_section_safety">Safety information</string>
+    <string name="shared_profile_safety_explain">Only shown to responders when you report, so they bring the right help.</string>
+    <string name="shared_profile_vuln_elderly">Elderly person at home</string>
+    <string name="shared_profile_vuln_mobility">Uses a wheelchair or has limited mobility</string>
+    <string name="shared_profile_vuln_medical_device">Medical device at home (oxygen etc.)</string>
+    <string name="shared_profile_vuln_infant">Infant or young child</string>
+    <string name="shared_profile_vuln_note">Anything else responders should know</string>
+    <string name="shared_profile_vuln_note_placeholder">For example: hard of hearing</string>
+    <string name="shared_profile_char_count">%1$d/%2$d</string>
+    <string name="shared_profile_save_safety">Save safety information</string>
+
+    <string name="shared_profile_section_fr">Community first responder</string>
+    <string name="shared_profile_fr_explain">You\'ll see medical alerts in your society and can tell the family you\'re coming.</string>
+    <string name="shared_profile_fr_label">Medical skill</string>
+    <string name="shared_profile_fr_none">None</string>
+    <string name="shared_profile_fr_doctor">Doctor</string>
+    <string name="shared_profile_fr_nurse">Nurse</string>
+    <string name="shared_profile_fr_paramedic">Paramedic</string>
+    <string name="shared_profile_fr_first_aid">First aid trained</string>
+
+    <string name="shared_profile_section_duty">Duty</string>
+    <string name="shared_profile_on_duty">On duty</string>
+    <string name="shared_profile_on_duty_hint_on">You get new alerts for your specialties.</string>
+    <string name="shared_profile_on_duty_hint_off">You won\'t get new alerts until you go on duty.</string>
+    <string name="shared_profile_duty_on_toast">You\'re on duty</string>
+    <string name="shared_profile_duty_off_toast">You\'re off duty</string>
+    <string name="shared_profile_specialties">Specialties</string>
+    <string name="shared_profile_specialties_admin">As admin, you see every alert in the society.</string>
+    <string name="shared_profile_specialties_none">No specialties yet. Ask your admin to set them.</string>
+    <string name="shared_profile_specialties_hint">Your admin sets these.</string>
+
+    <string name="shared_profile_section_alerts">Alerts on this phone</string>
+    <string name="shared_profile_alerts_background">Background alerts</string>
+    <string name="shared_profile_alerts_background_on">Kavach stays active so alerts reach you even when the app is closed. A small \"Kavach is active\" notification stays in your notification list.</string>
+    <string name="shared_profile_alerts_background_off">Off. You will not get alerts while Kavach is closed.</string>
+    <string name="shared_profile_alerts_on_toast">Background alerts turned on</string>
+    <string name="shared_profile_alerts_off_toast">Background alerts turned off</string>
+    <string name="shared_profile_alert_sound">Alert sound</string>
+    <string name="shared_profile_alert_sound_hint">Play a sound for emergency alerts while the app is open.</string>
+    <string name="shared_profile_sound_on_toast">Alert sound on</string>
+    <string name="shared_profile_sound_off_toast">Alert sound off</string>
+    <string name="shared_profile_notification_settings">Notification settings</string>
+    <string name="shared_profile_notification_settings_hint">Choose which alerts can pop up or make a sound.</string>
+    <string name="shared_profile_alerts_footnote">Some phones stop background apps to save battery. If alerts stop arriving, exclude Kavach from battery saving in your phone settings.</string>
+
+    <string name="shared_profile_section_account">Account</string>
+    <string name="shared_profile_logout_title">Log out?</string>
+    <string name="shared_profile_logout_text">You will need to sign in again.</string>
+    <plurals name="shared_profile_logout_queued">
+        <item quantity="one">%1$d report on this phone has not been sent yet. Logging out deletes it. Call the security desk if it is urgent.</item>
+        <item quantity="other">%1$d reports on this phone have not been sent yet. Logging out deletes them. Call the security desk if it is urgent.</item>
+    </plurals>
+
+    <!-- Incident detail (staff) -->
+    <string name="shared_detail_title">Alert</string>
+    <string name="shared_detail_not_found_title">Alert not found</string>
+    <string name="shared_detail_not_found_text">It may have been removed, or it\'s outside your specialty.</string>
+    <string name="shared_detail_back">Go back</string>
+    <string name="shared_detail_took">Took %1$s</string>
+    <string name="shared_detail_open_for">%1$s since it was reported</string>
+    <string name="shared_detail_needs_extra_help">Needs extra help</string>
+    <string name="shared_detail_section_details">Details</string>
+    <string name="shared_detail_reported_by">Reported by</string>
+    <string name="shared_detail_someone">Someone</string>
+    <string name="shared_detail_needs">Needs</string>
+    <string name="shared_detail_people_affected">People affected</string>
+    <string name="shared_detail_description">What they said</string>
+    <string name="shared_detail_location_note">Where exactly</string>
+    <string name="shared_detail_urgency">Urgency</string>
+    <string name="shared_detail_urgency_value">%1$d out of 100</string>
+    <string name="shared_detail_reported_at">Reported</string>
+    <string name="shared_detail_reported_at_value">%1$s · %2$s</string>
+    <string name="shared_detail_assigned_to">Assigned to</string>
+    <string name="shared_detail_unassigned">Not assigned yet</string>
+    <string name="shared_detail_resolution_note">Resolution note</string>
+    <string name="shared_detail_first_responders">First responders coming</string>
+    <string name="shared_detail_first_responders_none">None yet</string>
+    <string name="shared_detail_timeline">Timeline</string>
+    <string name="shared_detail_no_events">No activity yet.</string>
+    <string name="shared_detail_section_admin">Admin</string>
+
+    <string name="shared_detail_claimed_toast">Claimed. Head there now.</string>
+    <string name="shared_detail_status_updated_toast">Status updated</string>
+    <string name="shared_detail_resolved_toast">Marked resolved. Thank you.</string>
+    <string name="shared_detail_cancelled_toast">Incident cancelled</string>
+    <string name="shared_detail_assigned_toast">Assigned to %1$s</string>
+
+    <string name="shared_detail_resolve_title">Mark as resolved?</string>
+    <string name="shared_detail_resolve_text">Add a short note on what you did. This is optional.</string>
+    <string name="shared_detail_resolve_note_label">What was done</string>
+    <string name="shared_detail_resolve_note_placeholder">e.g. Reset the lift, resident out safely</string>
+
+    <string name="shared_detail_assign">Assign to…</string>
+    <string name="shared_detail_reassign">Reassign…</string>
+    <string name="shared_detail_assign_title">Assign to a responder</string>
+    <string name="shared_detail_assign_text">On-duty responders who handle %1$s are listed first.</string>
+    <string name="shared_detail_on_duty">On duty</string>
+    <string name="shared_detail_off_duty">Off duty</string>
+    <string name="shared_detail_handles_type">Handles %1$s</string>
+    <string name="shared_detail_not_their_specialty">Not their specialty</string>
+    <string name="shared_detail_assigned_now">Assigned now</string>
+    <string name="shared_detail_no_responders">No responders in the society yet.</string>
+    <string name="shared_detail_team_status">%1$s · %2$s</string>
+
+    <string name="shared_detail_cancel_incident">Cancel incident</string>
+    <string name="shared_detail_cancel_title">Cancel this incident?</string>
+    <string name="shared_detail_cancel_text">The reporter will see it as cancelled. Use this for false alarms or duplicates.</string>
+    <string name="shared_detail_cancel_reason_label">Reason</string>
+    <string name="shared_detail_cancel_reason_placeholder">e.g. False alarm, duplicate report</string>
+    <string name="shared_detail_keep_it">Keep it</string>
+
+    <string name="shared_detail_share_report">Share report</string>
+    <string name="shared_detail_share_chooser">Share incident report</string>
+
+    <!-- Shared report text (plain text built from incident_report) -->
+    <string name="shared_report_title">Kavach incident report</string>
+    <string name="shared_report_line">%1$s: %2$s</string>
+    <string name="shared_report_type">Type</string>
+    <string name="shared_report_status">Status</string>
+    <string name="shared_report_place">Place</string>
+    <string name="shared_report_reported">Reported</string>
+    <string name="shared_report_phone">%1$s (%2$s)</string>
+    <string name="shared_report_escalation">Escalation level</string>
+    <string name="shared_report_first_responders">First responders coming</string>
+    <string name="shared_report_events">Timeline</string>
+    <string name="shared_report_event_line">%1$s  %2$s</string>
+    <string name="shared_report_event_note">Note: %1$s</string>
+    <string name="shared_report_generated">Generated %1$s</string>
+    <!-- First-run walkthrough (WalkthroughScreen) -->
+    <string name="shared_intro_heading">How Kavach works</string>
+    <string name="shared_intro_skip">Skip</string>
+    <string name="shared_intro_next">Next</string>
+    <string name="shared_intro_done">Get started</string>
+    <string name="shared_intro_page_of">Page %1$d of %2$d</string>
+    <string name="shared_intro_replay">How Kavach works</string>
+    <string name="shared_intro_replay_hint">See the short walkthrough again</string>
+    <!-- Resident -->
+    <string name="shared_intro_res_report_title">Report in seconds</string>
+    <string name="shared_intro_res_report_text">Tap Report an emergency, choose what is happening and where, then hold the button for a second to send. Stuck in a lift? It is one tap.</string>
+    <string name="shared_intro_res_track_title">Watch help arrive</string>
+    <string name="shared_intro_res_track_text">See who accepted your alert, when they are on the way and when help has arrived. Call them straight from the screen.</string>
+    <string name="shared_intro_res_offline_title">Works without signal</string>
+    <string name="shared_intro_res_offline_text">No network? Your alert is saved on the phone and sent as soon as you are back online. The security desk number is always one tap away.</string>
+    <string name="shared_intro_res_loop_title">Stay in the loop</string>
+    <string name="shared_intro_res_loop_text">Answer Safety Checks, read society notices and get updates on your reports, even when the app is closed. Add health notes in Profile so responders know before they arrive.</string>
+    <!-- Responder -->
+    <string name="shared_intro_rsp_duty_title">Go on duty</string>
+    <string name="shared_intro_rsp_duty_text">Switch On duty to get alerts for your work on this phone. When you are off duty, new alerts stay quiet.</string>
+    <string name="shared_intro_rsp_claim_title">Claim an alert</string>
+    <string name="shared_intro_rsp_claim_text">Open alerts are sorted by urgency. Tap Claim in the app or on the notification. If someone else was faster, you will see who took it.</string>
+    <string name="shared_intro_rsp_steps_title">Keep everyone posted</string>
+    <string name="shared_intro_rsp_steps_text">Tap On my way, I\'ve reached and Mark resolved. The resident sees each step live.</string>
+    <string name="shared_intro_rsp_checks_title">Checks and equipment</string>
+    <string name="shared_intro_rsp_checks_text">Log compliance checks and update the status of lifts, the DG and pumps from the Checks and Assets tabs.</string>
+    <!-- Admin -->
+    <string name="shared_intro_adm_overview_title">See everything</string>
+    <string name="shared_intro_adm_overview_text">Overview shows what needs attention, unclaimed alerts and who is on duty, at a glance.</string>
+    <string name="shared_intro_adm_step_in_title">Step in when needed</string>
+    <string name="shared_intro_adm_step_in_text">Assign or reassign any alert. Alerts nobody claims are escalated to you after 2 and 5 minutes.</string>
+    <string name="shared_intro_adm_manage_title">Run the society</string>
+    <string name="shared_intro_adm_manage_text">Manage the team, the phone Members list, power mode, equipment, compliance, contacts and notices.</string>
+    <string name="shared_intro_adm_crisis_title">In a crisis</string>
+    <string name="shared_intro_adm_crisis_text">Start a Safety Check to ask a tower or the whole society \"Are you safe?\", and open the Command board on the security cabin\'s screen.</string>
+</resources>
