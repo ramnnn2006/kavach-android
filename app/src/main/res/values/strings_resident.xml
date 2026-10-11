@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Resident area strings. Owner: resident feature. Prefix: resident_.
+  English wording copied from kavach-app/src/i18n/strings/resident.js (en block).
+  Strings marked "new" have no website counterpart (Android-only steps).
+-->
+<resources>
+    <!-- Home -->
+    <string name="resident_hi">Hi</string>
+    <string name="resident_hi_name">Hi, %1$s</string>
+    <string name="resident_someone">Someone</string>
+    <string name="resident_active_title">Your active reports</string>
+    <string name="resident_report_emergency">Report an emergency</string>
+    <string name="resident_report_emergency_sub">Fire, medical, security, water or power</string>
+    <string name="resident_stuck_in_lift">I\'m stuck in a lift</string>
+    <string name="resident_stuck_in_lift_sub">Alert the lift team right away</string>
+    <string name="resident_quick_call">Quick call</string>
+    <string name="resident_security_desk">Security desk</string>
+    <string name="resident_call_112">Call 112</string>
+    <string name="resident_contact_112">Police, fire and ambulance</string>
+    <string name="resident_contact_101">Fire and rescue</string>
+    <string name="resident_contact_108">Ambulance</string>
+    <string name="resident_all_day">24×7</string>
+    <string name="resident_recent_title">Recent reports</string>
+    <string name="resident_see_all">See all</string>
+    <string name="resident_sent_at">Sent at %1$s · %2$s</string>
+    <string name="resident_sent_at_short">Sent at %1$s</string>
+    <string name="resident_sentence_pending_maintenance">We\'ve alerted the maintenance team</string>
+    <string name="resident_sentence_pending_security">We\'ve alerted the security team</string>
+    <string name="resident_sentence_accepted">%1$s accepted your alert</string>
+    <string name="resident_sentence_en_route">%1$s is on the way</string>
+    <string name="resident_sentence_on_scene">Help has arrived</string>
+    <string name="resident_sentence_resolved">Resolved in %1$d min</string>
+
+    <!-- Safety Check -->
+    <string name="resident_sc_eyebrow">Safety Check</string>
+    <string name="resident_sc_whole_society">Whole society</string>
+    <string name="resident_sc_started">Started %1$s</string>
+    <string name="resident_sc_ask">Let the society know you are OK. Tap one.</string>
+    <string name="resident_sc_safe">I\'m safe</string>
+    <string name="resident_sc_need_help">I need help</string>
+    <string name="resident_sc_keep">Keep my answer</string>
+    <string name="resident_sc_answered_safe">You said you\'re safe</string>
+    <string name="resident_sc_answered_help">You asked for help</string>
+    <string name="resident_sc_help_coming">Help has been alerted. Stay where you are if it is safe.</string>
+    <string name="resident_sc_track_help">Track help</string>
+    <string name="resident_sc_change">Change</string>
+    <!-- new: optional note with the answer -->
+    <string name="resident_sc_note_label">Add a note (optional)</string>
+
+    <!-- Outbox -->
+    <plurals name="resident_outbox_waiting">
+        <item quantity="one">1 report waiting to send</item>
+        <item quantity="other">%1$d reports waiting to send</item>
+    </plurals>
+    <string name="resident_outbox_hint">We\'ll retry automatically. If it\'s urgent, call the security desk.</string>
+    <string name="resident_send_now">Try sending now</string>
+    <string name="resident_outbox_sent">Report sent</string>
+    <string name="resident_outbox_failed">Your \"%1$s\" report could not be sent</string>
+    <string name="resident_outbox_failed_hint">The server did not accept it. Please call the security desk.</string>
+
+    <!-- Backup power -->
+    <string name="resident_dg_title">Society is on backup power (DG)</string>
+    <string name="resident_power_on">%1$s has backup power.</string>
+    <string name="resident_power_rotating">%1$s gets backup power in turns.</string>
+    <string name="resident_power_off">%1$s has no backup power right now.</string>
+    <string name="resident_power_advice_on">Lifts and lights are working. Please use power carefully.</string>
+    <string name="resident_power_advice_rotating">Power may go off at times. Use the stairs if you can.</string>
+    <string name="resident_power_advice_off">Avoid lifts in your tower. Use the stairs.</string>
+
+    <!-- Community first responders -->
+    <string name="resident_med_title">Medical alerts nearby</string>
+    <string name="resident_med_im_coming">I\'m coming</string>
+    <string name="resident_med_on_your_way">You\'re on your way. Thank you.</string>
+    <plurals name="resident_med_others">
+        <item quantity="one">1 neighbour is already on the way</item>
+        <item quantity="other">%1$d neighbours are already on the way</item>
+    </plurals>
+
+    <!-- Report: type -->
+    <string name="resident_whats_happening">What\'s happening?</string>
+    <string name="resident_whats_happening_sub">Pick the closest match. You can add details next.</string>
+    <string name="resident_life_danger">If someone\'s life is in danger, also call 112.</string>
+
+    <!-- Report: details -->
+    <string name="resident_where_title">Where</string>
+    <string name="resident_where_home">At my home</string>
+    <string name="resident_where_my_tower">In my tower</string>
+    <string name="resident_where_else">Somewhere else</string>
+    <string name="resident_where_else_sub">Another tower, clubhouse, parking, gate…</string>
+    <string name="resident_place_label">Place</string>
+    <string name="resident_choose_place">Choose a place</string>
+    <string name="resident_places_unavailable">Can\'t load places — describe it below</string>
+    <string name="resident_floor_label">Floor</string>
+    <string name="resident_floor_unknown">Not sure</string>
+    <string name="resident_spot_label">Exact spot (optional)</string>
+    <string name="resident_spot_hint">For example: near the Tower B lift lobby</string>
+    <string name="resident_err_choose_zone">Choose where it is happening.</string>
+    <string name="resident_err_describe_where">Tell us where it is happening.</string>
+    <string name="resident_which_lift">Which lift?</string>
+    <string name="resident_lift_not_sure">Not sure</string>
+    <string name="resident_lift_choose_place">Choose a place above to see its lifts.</string>
+    <string name="resident_lifts_error">Couldn\'t load the lift list. You can still send.</string>
+    <string name="resident_lift_floor_label">Floor the lift is at (if you know)</string>
+    <string name="resident_lift_state_degraded">Faulty lately</string>
+    <string name="resident_lift_state_down">Out of service</string>
+    <string name="resident_lift_state_maintenance">Under repair</string>
+    <string name="resident_people_label">People who need help</string>
+    <string name="resident_people_hint">Include yourself</string>
+    <string name="resident_fewer">Fewer people</string>
+    <string name="resident_more">More people</string>
+    <string name="resident_note_label">Anything else? (optional)</string>
+    <string name="resident_chars_left">%1$d characters left</string>
+    <string name="resident_note_placeholder_lift">e.g. 2 of us inside, lift stopped near floor 8</string>
+    <string name="resident_note_placeholder_fire">e.g. smoke coming from the kitchen of B-905</string>
+    <string name="resident_note_placeholder_medical">e.g. elderly man fainted, he is breathing</string>
+    <string name="resident_note_placeholder_water">e.g. pipe burst in the bathroom</string>
+    <string name="resident_note_placeholder_power">e.g. sparks from the meter box on floor 3</string>
+    <string name="resident_note_placeholder_security">e.g. stranger trying flat doors on floor 6</string>
+    <string name="resident_queued_title">Not sent yet</string>
+    <string name="resident_queued_text">You\'re offline, so the alert hasn\'t reached the team. It will send automatically when you\'re back online. If it\'s urgent, call now.</string>
+    <string name="resident_back_home">Back to home</string>
+    <!-- new: review step and hold-to-send -->
+    <string name="resident_review_action">Review alert</string>
+    <string name="resident_review_title">Check before sending</string>
+    <string name="resident_review_hold_hint">Press and hold the button for a second to send the alert.</string>
+    <string name="resident_hold_to_send">Hold to send alert</string>
+    <string name="resident_holding">Keep holding…</string>
+    <string name="resident_sending">Sending…</string>
+    <string name="resident_edit_details">Change details</string>
+
+    <!-- Tracker -->
+    <string name="resident_tracker_title">Your alert</string>
+    <string name="resident_not_found_title">Report not found</string>
+    <string name="resident_not_found_text">It may have been removed, or it belongs to someone else.</string>
+    <string name="resident_see_my_reports">See my reports</string>
+    <string name="resident_escalated">Taking longer than usual — society managers have been alerted.</string>
+    <string name="resident_team_maintenance">Maintenance team</string>
+    <string name="resident_team_security">Security team</string>
+    <string name="resident_waiting_title">Waiting for someone to accept</string>
+    <plurals name="resident_fr_coming">
+        <item quantity="one">1 neighbour with medical training is on the way</item>
+        <item quantity="other">%1$d neighbours with medical training are on the way</item>
+    </plurals>
+    <string name="resident_tips_title">What to do now</string>
+    <!-- new: TalkBack state of the collapsible tips -->
+    <string name="resident_tips_expanded">Expanded</string>
+    <string name="resident_tips_collapsed">Collapsed</string>
+    <string name="resident_progress_title">Progress</string>
+    <string name="resident_step_sent">Sent</string>
+    <string name="resident_step_accepted">Accepted</string>
+    <string name="resident_step_on_the_way">On the way</string>
+    <string name="resident_step_arrived">Help arrived</string>
+    <string name="resident_step_resolved">Resolved</string>
+    <string name="resident_your_report">Your report</string>
+    <string name="resident_kv_where">Where</string>
+    <string name="resident_kv_people">People</string>
+    <string name="resident_kv_note">Note</string>
+    <string name="resident_add_details">Add details</string>
+    <string name="resident_details_saved">Details updated</string>
+    <string name="resident_updates_title">Updates</string>
+    <string name="resident_cancel_false_alarm">Cancel — false alarm</string>
+    <string name="resident_cancel_confirm_title">Cancel this alert?</string>
+    <string name="resident_cancel_confirm_text">Only do this if no one needs help. The team will stop coming.</string>
+    <string name="resident_cancel_confirm_btn">Yes, cancel alert</string>
+    <string name="resident_cancelled_toast">Alert cancelled</string>
+    <!-- new: optional reason, sent confirmation -->
+    <string name="resident_cancel_reason_label">Reason (optional)</string>
+    <string name="resident_keep_alert">Keep alert</string>
+    <string name="resident_alert_sent">Alert sent</string>
+
+    <!-- Reports -->
+    <string name="resident_reports_title">My reports</string>
+    <string name="resident_tab_active">Active</string>
+    <string name="resident_tab_all">All</string>
+    <string name="resident_no_active_title">Nothing active</string>
+    <string name="resident_no_active_text">You have no open alerts. If something is wrong, report it now.</string>
+    <string name="resident_no_reports_title">No reports yet</string>
+    <string name="resident_no_reports_text">Reports you send will appear here with their status.</string>
+
+    <!-- Notices -->
+    <string name="resident_notices_title">Notices</string>
+    <string name="resident_notices_sub">From your society office</string>
+    <string name="resident_pinned">Pinned</string>
+    <string name="resident_notices_recent">Recent</string>
+    <string name="resident_notices_all">All notices</string>
+    <string name="resident_no_notices_title">No notices</string>
+    <string name="resident_no_notices_text">Announcements about power cuts, lift work and drills will appear here.</string>
+
+    <!-- Contacts -->
+    <string name="resident_contacts_title">Contacts</string>
+    <string name="resident_contacts_sub">Tap to call</string>
+    <string name="resident_group_society">Society</string>
+    <string name="resident_group_emergency">Emergency services</string>
+    <string name="resident_no_society_contacts">Your society has not added contacts yet.</string>
+
+    <!-- Safety tips (one tip per item) -->
+    <string-array name="resident_tips_lift">
+        <item>Stay calm. Help has been alerted, and lifts have air vents — you will not run out of air.</item>
+        <item>Press the alarm bell button inside the lift.</item>
+        <item>Don\'t force the doors open or try to climb out.</item>
+        <item>Stand away from the doors.</item>
+        <item>Note the floor number on the display and tell the person who comes.</item>
+    </string-array>
+    <string-array name="resident_tips_fire">
+        <item>Leave by the stairs. Never use the lift.</item>
+        <item>Stay low if there is smoke — the air is cleaner near the floor.</item>
+        <item>Close doors behind you to slow the fire.</item>
+        <item>Don\'t go back in for belongings.</item>
+        <item>Go to the assembly point and answer the Safety Check.</item>
+    </string-array>
+    <string-array name="resident_tips_medical">
+        <item>Don\'t move the person if they might be injured.</item>
+        <item>Keep them warm and comfortable.</item>
+        <item>Keep their medicines and medical papers ready.</item>
+        <item>If they are not breathing or not waking up, call 108 now.</item>
+        <item>Keep your door open so help can find you.</item>
+    </string-array>
+    <string-array name="resident_tips_water">
+        <item>Close the main water valve or the nearest tap if it is safe.</item>
+        <item>Switch off power points near the water.</item>
+        <item>Don\'t touch switches with wet hands.</item>
+        <item>Move your things away from the water.</item>
+    </string-array>
+    <string-array name="resident_tips_power">
+        <item>Stay away from sparking wires or switchboards.</item>
+        <item>Switch off the main switch (MCB) only if it is safe.</item>
+        <item>Don\'t use the lift during a power cut.</item>
+        <item>Unplug costly appliances.</item>
+    </string-array>
+    <string-array name="resident_tips_security">
+        <item>Stay inside and lock your door.</item>
+        <item>Don\'t confront the person.</item>
+        <item>Note what they look like and which way they went.</item>
+        <item>If anyone is in danger, call 112.</item>
+    </string-array>
+</resources>
