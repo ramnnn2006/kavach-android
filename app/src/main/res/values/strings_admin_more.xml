@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Admin Society, Reports, Notices, Safety Check, Command board and More.
+  Prefix: admin_m_ (the existing admin_ keys stay in strings_admin.xml).
+-->
+<resources>
+    <string name="admin_m_edit_contacts">Edit contacts</string>
+    <string name="admin_m_loading_period">Loading the selected period</string>
+</resources>
