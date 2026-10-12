@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Alerts (feature/alerts) strings. Prefix: alerts_. Wording copied from the English texts in
+  kavach-app/supabase/functions/notify/index.ts. Type words ("fire", "lift") come from the
+  common_type_short_* strings.
+-->
+<resources>
+    <!-- Notification channels (names and descriptions are shown in system settings) -->
+    <string name="alerts_channel_emergency_name">Emergency alerts</string>
+    <string name="alerts_channel_emergency_desc">New emergencies, assignments, escalations and requests for medical help nearby.</string>
+    <string name="alerts_channel_status_name">Updates on your reports</string>
+    <string name="alerts_channel_status_desc">Progress of reports you made, and changes to alerts you are handling.</string>
+    <string name="alerts_channel_safety_name">Safety Check</string>
+    <string name="alerts_channel_safety_desc">Roll calls started by the society. Please answer quickly.</string>
+    <string name="alerts_channel_notices_name">Society notices</string>
+    <string name="alerts_channel_notices_desc">Announcements from your society office.</string>
+    <string name="alerts_channel_service_name">Background connection</string>
+    <string name="alerts_channel_service_desc">Shows that Kavach is connected and can receive alerts.</string>
+
+    <!-- Always-on notification -->
+    <string name="alerts_service_title">Kavach is active</string>
+    <string name="alerts_service_text">Waiting for alerts. Tap to open.</string>
+
+    <!-- Responders and admins: new reports -->
+    <string name="alerts_new_alert">New %1$s alert</string>
+    <string name="alerts_new_alert_no_duty">New %1$s alert — no one on duty</string>
+    <string name="alerts_needs_extra_care">Needs extra care</string>
+    <string name="alerts_someone">A responder</string>
+    <string name="alerts_assigned">You\'ve been assigned: %1$s alert</string>
+    <string name="alerts_reassigned_title">Alert reassigned</string>
+    <string name="alerts_reassigned_body">%1$s alert in %2$s is now with %3$s.</string>
+    <string name="alerts_staff_cancelled_title">Alert cancelled</string>
+    <string name="alerts_staff_cancelled_body">%1$s alert in %2$s was cancelled.</string>
+    <string name="alerts_escalated_title">Unclaimed for %1$d min: %2$s alert in %3$s</string>
+    <string name="alerts_escalated_body">%1$s · Level %2$d. Assign someone now.</string>
+
+    <!-- Community first responders -->
+    <string name="alerts_first_aid_title">Medical help needed nearby</string>
+    <string name="alerts_first_aid_body">%1$s — can you help? Tap to see.</string>
+
+    <!-- Residents: progress of their own report -->
+    <string name="alerts_status_accepted">%1$s accepted your alert</string>
+    <string name="alerts_status_assigned_yours">%1$s is assigned to your alert</string>
+    <string name="alerts_status_accepted_body">Help is being arranged. Tap to track.</string>
+    <string name="alerts_status_en_route">%1$s is on the way</string>
+    <string name="alerts_status_en_route_body">Stay where you are if it is safe.</string>
+    <string name="alerts_status_on_scene">Help has arrived</string>
+    <string name="alerts_status_on_scene_body">%1$s is at your location.</string>
+    <string name="alerts_status_resolved">Your alert is resolved</string>
+    <string name="alerts_status_resolved_body">Tap to see what was done.</string>
+    <string name="alerts_status_cancelled">Your alert was cancelled</string>
+    <string name="alerts_status_cancelled_body">%1$s alert · %2$s</string>
+
+    <!-- Residents: Safety Check and notices -->
+    <string name="alerts_safety_title">Safety Check</string>
+    <string name="alerts_safety_body">%1$s — tap to answer</string>
+    <string name="alerts_notice_fallback_title">New notice from your society</string>
+
+    <!-- Notification actions and their results -->
+    <string name="alerts_action_coming">I\'m coming</string>
+    <string name="alerts_claim_working">Claiming this alert…</string>
+    <string name="alerts_coming_working">Letting the team know you are coming…</string>
+    <string name="alerts_claim_done_title">You claimed this alert</string>
+    <string name="alerts_claim_done_body">Tap to open it and update your progress.</string>
+    <string name="alerts_claim_taken_title">Already taken</string>
+    <string name="alerts_coming_done_title">Thank you, you are marked as coming</string>
+    <string name="alerts_coming_done_body">The team can see that help is on the way.</string>
+    <string name="alerts_action_failed_title">That didn\'t go through</string>
+</resources>
