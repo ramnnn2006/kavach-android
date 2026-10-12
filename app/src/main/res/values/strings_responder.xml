@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Responder screens (Alerts, Checks, Assets, History). Owner: responder area. Prefix: responder_.
+  Wording copied from kavach-app/src/i18n/strings/responder.js (en block).
+  Reused from strings.xml: nav_alerts / nav_checks / nav_assets / nav_history (screen titles),
+  common_action_claim, common_action_*, common_compliance_*, common_asset_kind_*, common_asset_state_*,
+  common_err_* (claim errors), common_call, common_cancel, common_save.
+-->
+<resources>
+    <!-- Alerts: duty switch -->
+    <string name="responder_on_duty">On duty</string>
+    <string name="responder_on_duty_detail">New alerts for your work ring on this phone.</string>
+    <string name="responder_off_duty_banner">You\'re off duty. Turn on duty to get alerts.</string>
+    <string name="responder_duty_on_toast">You\'re on duty. New alerts will ring.</string>
+    <string name="responder_duty_off_toast">You\'re off duty.</string>
+
+    <!-- Alerts: sections and empty state -->
+    <string name="responder_section_mine">Assigned to you</string>
+    <string name="responder_section_open">Open</string>
+    <string name="responder_section_count">%1$s · %2$d</string>
+    <string name="responder_empty_open_title">No open alerts</string>
+    <string name="responder_empty_open_text">New alerts for your specialties appear here right away, with a sound.</string>
+    <string name="responder_empty_open_off_text">Go on duty to hear new alerts as they come in.</string>
+    <string name="responder_see_checks">See checks</string>
+
+    <!-- Alerts: cards and actions -->
+    <string name="responder_open_details">Open details</string>
+    <string name="responder_claim_cd">Claim: %1$s</string>
+    <string name="responder_claimed_toast">Claimed. Head there now.</string>
+    <string name="responder_call_name">Call %1$s</string>
+    <string name="responder_call_reporter">Call reporter</string>
+    <string name="responder_vulnerable_badge">Needs extra help</string>
+    <string name="responder_status_updated_toast">Status updated</string>
+    <string name="responder_resolved_toast">Marked resolved. Thank you.</string>
+    <string name="responder_resolve_title">Mark as resolved?</string>
+    <string name="responder_resolve_text">Add a short note on what you did. This is optional.</string>
+    <string name="responder_resolve_note_label">What was done</string>
+    <string name="responder_resolve_note_placeholder">e.g. Reset the lift, resident out safely</string>
+
+    <!-- Checks -->
+    <string name="responder_due_on">Due %1$s</string>
+    <string name="responder_due_line">%1$s · %2$s</string>
+    <plurals name="responder_days_overdue">
+        <item quantity="one">%1$d day overdue</item>
+        <item quantity="other">%1$d days overdue</item>
+    </plurals>
+    <string name="responder_due_today">due today</string>
+    <string name="responder_due_tomorrow">tomorrow</string>
+    <string name="responder_due_in_days">in %1$d days</string>
+    <string name="responder_last_done">Last done %1$s</string>
+    <string name="responder_never_done">Not done yet</string>
+    <string name="responder_mark_done">Mark done</string>
+    <string name="responder_mark_done_cd">Mark done: %1$s</string>
+    <string name="responder_mark_done_title">Mark this check done?</string>
+    <string name="responder_mark_done_text">%1$s. The next due date moves forward on its own.</string>
+    <string name="responder_check_note_label">Note (optional)</string>
+    <string name="responder_check_note_placeholder">e.g. Tank at 80%, battery OK</string>
+    <string name="responder_check_logged_toast">Done. The next due date has moved forward.</string>
+    <string name="responder_check_logged_due_toast">Done. Next due %1$s.</string>
+    <string name="responder_checks_empty_title">No checks for your specialties</string>
+    <string name="responder_checks_empty_text">Scheduled checks for your equipment will show up here.</string>
+    <string name="responder_all_checks_ok">All checks are up to date.</string>
+
+    <!-- Assets -->
+    <string name="responder_amc_expired">AMC expired %1$s</string>
+    <string name="responder_amc_expires">AMC ends %1$s</string>
+    <string name="responder_licence_expired">Licence expired %1$s</string>
+    <string name="responder_licence_expires">Licence ends %1$s</string>
+    <string name="responder_other_zone">Other</string>
+    <string name="responder_asset_state_label">Status</string>
+    <string name="responder_asset_note_label">Note (optional)</string>
+    <string name="responder_asset_note_placeholder">e.g. Vendor visit booked for Friday</string>
+    <string name="responder_changed_by">Changed %1$s by %2$s</string>
+    <string name="responder_changed_ago">Changed %1$s</string>
+    <string name="responder_never_changed">No changes recorded yet</string>
+    <string name="responder_asset_saved_toast">%1$s: %2$s</string>
+    <string name="responder_assets_empty_title">No equipment in your specialties</string>
+    <string name="responder_assets_empty_text">Lifts, pumps and the DG you look after will show up here.</string>
+    <plurals name="responder_need_attention">
+        <item quantity="one">%1$d needs attention</item>
+        <item quantity="other">%1$d need attention</item>
+    </plurals>
+    <string name="responder_edit_asset">Change status of %1$s</string>
+
+    <!-- History -->
+    <string name="responder_stat_resolved_week">Resolved this week</string>
+    <string name="responder_stat_avg_resolve">Average time to resolve</string>
+    <string name="responder_stat_total">Total handled</string>
+    <string name="responder_history_jobs">Handled by you</string>
+    <string name="responder_history_empty_title">Nothing here yet</string>
+    <string name="responder_history_empty_text">Alerts you resolve show up here with how long they took.</string>
+    <string name="responder_go_to_alerts">Go to alerts</string>
+    <string name="responder_resolved_in">Resolved in %1$s</string>
+</resources>
