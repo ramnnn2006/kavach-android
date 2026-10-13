@@ -232,7 +232,7 @@ class OutboxRepository @Inject constructor(
      */
     private fun withLateNote(report: NewIncident, createdAtMs: Long): NewIncident {
         if (System.currentTimeMillis() - createdAtMs < LATE_AFTER_MS) return report
-        val at = java.time.LocalTime.ofInstant(Instant.ofEpochMilli(createdAtMs), java.time.ZoneId.systemDefault())
+        val at = Instant.ofEpochMilli(createdAtMs).atZone(java.time.ZoneId.systemDefault()).toLocalTime()
             .truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
         val note = "[Sent late - reported at $at]"
         return report.copy(description = listOfNotNull(note, report.description?.takeIf { it.isNotBlank() }).joinToString(" "))
