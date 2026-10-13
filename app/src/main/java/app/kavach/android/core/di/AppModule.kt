@@ -78,7 +78,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideOutboxDatabase(@ApplicationContext context: Context): OutboxDatabase =
-        Room.databaseBuilder(context, OutboxDatabase::class.java, "kavach_outbox.db").build()
+        Room.databaseBuilder(context, OutboxDatabase::class.java, "kavach_outbox.db")
+            .fallbackToDestructiveMigration(true).build()
 
     @Provides
     fun provideOutboxDao(db: OutboxDatabase): OutboxDao = db.outboxDao()

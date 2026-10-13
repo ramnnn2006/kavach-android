@@ -80,7 +80,14 @@ class AlertActionReceiver : BroadcastReceiver() {
             val body = context.getString(
                 if (action == ACTION_CLAIM) R.string.alerts_claim_done_body else R.string.alerts_coming_done_body,
             )
-            notifier.showResult(tag, link, title, body, timeout = null)
+            if (action == ACTION_COMING) {
+                // The next medical snapshot clears the alert's own tag (I am coming = no longer open);
+                // keep the confirmation on a separate tag so it does not vanish with it
+                notifier.cancelTag(tag)
+                notifier.showResult("$tag:ack", link, title, body, timeout = null)
+            } else {
+                notifier.showResult(tag, link, title, body, timeout = null)
+            }
         } catch (e: TimeoutCancellationException) {
             if (action == ACTION_CLAIM) {
                 // The request may still have reached the server. Look before reporting a failure,
