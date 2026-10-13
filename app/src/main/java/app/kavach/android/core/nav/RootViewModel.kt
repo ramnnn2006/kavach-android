@@ -52,6 +52,9 @@ class RootViewModel @Inject constructor(
      */
     private var lastProfile: Profile? = null
 
+    // Declared before [ui]: its first emission can already run toUi()
+    private val _pendingLink = MutableStateFlow<DeepLink?>(null)
+
     /** Bumped by [retryProfile] so the splash shows the spinner again while it retries. */
     private val retryTick = MutableStateFlow(0)
 
@@ -74,6 +77,8 @@ class RootViewModel @Inject constructor(
         SessionState.Loading -> RootUi.Loading
         SessionState.SignedOut -> {
             lastProfile = null
+            // A link meant for the previous user must not open in the next user's shell
+            _pendingLink.value = null
             RootUi.SignedOut
         }
         is SessionState.SignedIn -> {
@@ -90,7 +95,6 @@ class RootViewModel @Inject constructor(
         }
     }
 
-    private val _pendingLink = MutableStateFlow<DeepLink?>(null)
     /** A notification tap waiting to be opened once the role shell is showing. */
     val pendingLink: StateFlow<DeepLink?> = _pendingLink.asStateFlow()
 

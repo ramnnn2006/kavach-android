@@ -122,6 +122,7 @@ fun WelcomeScreen() {
                                     options = floors.map { Format.floor(context, it).orEmpty() },
                                     onSelect = { index -> floor = floors[index] },
                                     enabled = !saving,
+                                    errorText = if (showErrors && floor == null) stringResource(R.string.shared_welcome_err_floor) else null,
                                 )
                             }
                             OutlinedTextField(
@@ -146,7 +147,7 @@ fun WelcomeScreen() {
                                 keyboardActions = KeyboardActions(
                                     onDone = {
                                         focusManager.clearFocus()
-                                        submit(vm, zoneId, floor, flat) { showErrors = true }
+                                        submit(vm, zoneId, floor, floors.isNotEmpty(), flat) { showErrors = true }
                                     },
                                 ),
                                 modifier = Modifier.fillMaxWidth(),
@@ -155,7 +156,7 @@ fun WelcomeScreen() {
                                 text = stringResource(R.string.shared_welcome_save),
                                 onClick = {
                                     focusManager.clearFocus()
-                                    submit(vm, zoneId, floor, flat) { showErrors = true }
+                                    submit(vm, zoneId, floor, floors.isNotEmpty(), flat) { showErrors = true }
                                 },
                                 busy = saving,
                             )
@@ -187,8 +188,8 @@ fun WelcomeScreen() {
 }
 
 /** Validates the form; shows field errors via [onInvalid] or saves. */
-private fun submit(vm: WelcomeViewModel, zoneId: String, floor: Int?, flat: String, onInvalid: () -> Unit) {
-    if (zoneId.isBlank() || flat.isBlank()) {
+private fun submit(vm: WelcomeViewModel, zoneId: String, floor: Int?, needsFloor: Boolean, flat: String, onInvalid: () -> Unit) {
+    if (zoneId.isBlank() || flat.isBlank() || (needsFloor && floor == null)) {
         onInvalid()
         return
     }

@@ -85,6 +85,8 @@ data class MemberEdit(
     val role: UserRole,
     val specialties: List<IncidentType>,
     val flatLabel: String,
+    /** Incidents currently assigned to this person (staff list only). */
+    val activeLoad: Int = 0,
     /** Pre-selected role when opened from "Make staff". */
     val initialRole: UserRole? = null,
 )
@@ -220,6 +222,7 @@ fun AdminTeamScreen(navigator: KavachNavigator) {
                                 role = m.role,
                                 specialties = m.specialties,
                                 flatLabel = "",
+                                activeLoad = m.activeLoad,
                             ),
                         )
                     },
@@ -404,6 +407,9 @@ private fun MemberSheet(edit: MemberEdit, isSelf: Boolean, vm: AdminTeamViewMode
                 onConfirm = {
                     if (role == UserRole.Responder && specialties.isEmpty()) {
                         localError = R.string.admin_pick_specialty
+                    } else if (edit.role == UserRole.Responder && role == UserRole.Resident && edit.activeLoad > 0) {
+                        // Their open incidents would stay assigned to a non-responder
+                        localError = R.string.admin_demote_has_load
                     } else {
                         localError = null
                         vm.save(edit, role, specialties) {

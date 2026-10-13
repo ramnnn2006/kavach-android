@@ -291,4 +291,6 @@
     <string name="admin_lifts_equipment">Lifts &amp; equipment</string>
     <string name="admin_all_equipment_ok">All equipment working</string>
     <string name="admin_add_contact">Add contact</string>
+    <string name="admin_demote_has_load">This responder still has open incidents. Reassign them first, then change the role.</string>
+    <string name="admin_check_already_running">A Safety Check is already running. End it before starting another.</string>
 </resources>

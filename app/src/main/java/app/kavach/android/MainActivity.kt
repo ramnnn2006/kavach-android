@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
         // A recreated activity, or one reopened from Recents (which replays the original
         // notification intent), must not open the old link again
         val fresh = savedInstanceState == null && (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0
-        val link = if (fresh) DeepLinks.parse(intent) else null
+        val link = if (fresh) DeepLinks.parse(this, intent) else null
         showOverLockScreen(link)
         root.onDeepLink(link)
 
@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        val link = DeepLinks.parse(intent)
+        val link = DeepLinks.parse(this, intent)
         showOverLockScreen(link)
         root.onDeepLink(link)
     }

@@ -265,7 +265,7 @@ fun renewals(assets: List<Asset>, today: LocalDate, windowDays: Long = RENEWAL_W
 
 val CONTACT_PHONE_REGEX = Regex("^[0-9+()\\-\\s]{3,20}$")
 
-fun isValidContactPhone(text: String): Boolean = CONTACT_PHONE_REGEX.matches(text.trim())
+fun isValidContactPhone(text: String): Boolean = text.trim().let { CONTACT_PHONE_REGEX.matches(it) && it.any(Char::isDigit) }
 
 // ── Notices ─────────────────────────────────────────────────────────────────
 

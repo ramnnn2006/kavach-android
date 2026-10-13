@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -35,7 +36,11 @@ import app.kavach.android.core.ui.theme.Spacing
 
 @Composable
 fun LoadingState(modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxSize().padding(Spacing.xl), contentAlignment = Alignment.Center) {
+    val loading = stringResource(R.string.common_loading)
+    Box(
+        modifier.fillMaxSize().padding(Spacing.xl).semantics { contentDescription = loading },
+        contentAlignment = Alignment.Center,
+    ) {
         CircularProgressIndicator()
     }
 }

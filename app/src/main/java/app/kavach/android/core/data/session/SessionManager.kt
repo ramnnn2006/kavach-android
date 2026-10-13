@@ -64,17 +64,17 @@ class SessionManager @Inject constructor(
      * Last profile on disk, so the app opens straight away (and offline: a resident must still be
      * able to queue an emergency report). Cleared on sign-out. Read and written off the main thread.
      */
-    private val cache by lazy { context.getSharedPreferences(CACHE_FILE, Context.MODE_PRIVATE) }
+    private val cache by lazy { SecurePrefs.open(context, CACHE_FILE) }
     @Volatile private var cached: Profile? = null
 
     private val userId = client.auth.sessionStatus
         .onEach { status ->
-            // Covers sign-outs that don't go through signOut() (expired session)
+            // Covers sign-outs that don't go through signOut() (expired session). Queued reports
+            // stay on the phone: an expired session must not silently drop a real emergency
+            // report. They are only ever sent by their own user (flush) and cleared by an
+            // explicit, confirmed log out.
             if (status is SessionStatus.NotAuthenticated && status.isSignOut) {
-                appScope.launch {
-                    runCatching { outbox.clear() }
-                    forgetProfile()
-                }
+                appScope.launch { forgetProfile() }
             }
         }
         .scan<SessionStatus, UserKey>(UserKey.Loading) { previous, status ->

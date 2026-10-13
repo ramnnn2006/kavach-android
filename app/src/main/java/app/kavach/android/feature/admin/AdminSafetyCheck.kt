@@ -179,6 +179,11 @@ class AdminSafetyCheckViewModel @Inject constructor(
         _error.value = null
         viewModelScope.launch {
             try {
+                // The server allows several running checks; a second would hide the first
+                if (safetyRepo.active() != null) {
+                    _error.value = R.string.admin_check_already_running
+                    return@launch
+                }
                 safetyRepo.start(scope, zoneId, message.trim(), type)
                 messages.send(R.string.admin_check_started)
                 // Keep the form locked until the new check is on screen: the server allows more

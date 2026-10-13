@@ -30,7 +30,7 @@ data class QueueSplit(val mine: List<Incident>, val open: List<Incident>) {
  */
 fun splitQueue(rows: List<Incident>, me: String?): QueueSplit {
     val mine = rows
-        .filter { me != null && it.assignedTo == me && it.status != IncidentStatus.Pending && it.status.isActive }
+        .filter { me != null && it.assignedTo == me && it.status.isActive }
         .sortedWith(Rules.byUrgency)
     val open = rows
         .filter { it.status == IncidentStatus.Pending && (me == null || it.assignedTo != me) }

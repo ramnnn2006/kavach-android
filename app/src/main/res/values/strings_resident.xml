@@ -126,6 +126,7 @@
     <string name="resident_review_hold_hint">Press and hold the button for a second to send the alert.</string>
     <string name="resident_hold_to_send">Hold to send alert</string>
     <string name="resident_holding">Keep holding…</string>
+    <string name="resident_hold_released_early">Too short - keep holding to send</string>
     <string name="resident_sending">Sending…</string>
     <string name="resident_edit_details">Change details</string>
 

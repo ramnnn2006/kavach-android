@@ -25,3 +25,10 @@
 -keep class * implements io.ktor.client.HttpClientEngineContainer { *; }
 # Ktor's debug detector references JVM-only classes that don't exist on Android
 -dontwarn java.lang.management.**
+
+# Verbose logs have no place in release builds
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+    public static int i(...);
+}

@@ -244,4 +244,5 @@
     <string name="shared_intro_adm_manage_text">Manage the team, the phone Members list, power mode, equipment, compliance, contacts and notices.</string>
     <string name="shared_intro_adm_crisis_title">In a crisis</string>
     <string name="shared_intro_adm_crisis_text">Start a Safety Check to ask a tower or the whole society \"Are you safe?\", and open the Command board on the security cabin\'s screen.</string>
+    <string name="shared_welcome_err_floor">Choose your floor</string>
 </resources>

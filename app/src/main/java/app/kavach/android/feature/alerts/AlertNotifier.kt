@@ -231,11 +231,12 @@ class AlertNotifier @Inject constructor(
         }
         val b = emergencyBuilder(e, title, details(inc, withZone = true), DeepLink(LinkTarget.Incident, inc.id), silent)
         // Claim only makes sense for someone on duty who can take it
-        if (e.mode == NewReportMode.OnDuty && user.onDuty) {
+        if (e.mode == NewReportMode.OnDuty) {
             b.addAction(
-                R.drawable.ic_notification,
-                context.getString(R.string.common_action_claim),
-                actionIntent(AlertActionReceiver.ACTION_CLAIM, inc.id, e.tag),
+                secureAction(
+                    context.getString(R.string.common_action_claim),
+                    actionIntent(AlertActionReceiver.ACTION_CLAIM, inc.id, e.tag),
+                ),
             )
         }
         return b.build()
@@ -261,9 +262,10 @@ class AlertNotifier @Inject constructor(
         val body = context.getString(R.string.alerts_first_aid_body, medicalWhere(alert))
         val b = emergencyBuilder(e, title, body, DeepLink(LinkTarget.MedicalAlert, alert.id), silent)
         b.addAction(
-            R.drawable.ic_notification,
-            context.getString(R.string.alerts_action_coming),
-            actionIntent(AlertActionReceiver.ACTION_COMING, alert.id, e.tag),
+            secureAction(
+                context.getString(R.string.alerts_action_coming),
+                actionIntent(AlertActionReceiver.ACTION_COMING, alert.id, e.tag),
+            ),
         )
         return b.build()
     }
@@ -362,7 +364,18 @@ class AlertNotifier @Inject constructor(
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            // Place, people count and "needs extra care" stay off the lock screen: the public
+            // version carries only the title and a generic line until the phone is unlocked.
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .setPublicVersion(
+                NotificationCompat.Builder(context, AlertChannelId.Emergency.id)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(ContextCompat.getColor(context, R.color.notification_emergency))
+                    .setContentTitle(title)
+                    .setContentText(context.getString(R.string.alerts_locked_body))
+                    .setCategory(NotificationCompat.CATEGORY_ALARM)
+                    .build(),
+            )
             .setWhen(e.at.toEpochMilli())
             .setShowWhen(true)
             .setAutoCancel(true)
@@ -371,6 +384,12 @@ class AlertNotifier @Inject constructor(
         if (silent) b.setSilent(true)
         return b
     }
+
+    /** Claim / I'm coming change data: on Android 12+ they need the phone unlocked first. */
+    private fun secureAction(title: String, intent: PendingIntent): NotificationCompat.Action =
+        NotificationCompat.Action.Builder(R.drawable.ic_notification, title, intent)
+            .setAuthenticationRequired(true)
+            .build()
 
     private fun actionIntent(action: String, incidentId: String, tag: String): PendingIntent {
         val intent = Intent(context, AlertActionReceiver::class.java)

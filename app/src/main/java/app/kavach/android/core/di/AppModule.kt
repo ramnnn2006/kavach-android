@@ -5,6 +5,7 @@ import androidx.room.Room
 import app.kavach.android.BuildConfig
 import app.kavach.android.core.data.outbox.OutboxDao
 import app.kavach.android.core.data.outbox.OutboxDatabase
+import app.kavach.android.core.data.session.EncryptedSessionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,7 +51,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSupabase(json: Json): SupabaseClient =
+    fun provideSupabase(@ApplicationContext context: Context, json: Json): SupabaseClient =
         createSupabaseClient(
             supabaseUrl = BuildConfig.SUPABASE_URL,
             supabaseKey = BuildConfig.SUPABASE_KEY,
@@ -63,6 +64,7 @@ object AppModule {
             // networks also need longer for lists
             requestTimeout = 30.seconds
             install(Auth) {
+                sessionManager = EncryptedSessionManager(context, json)
                 autoLoadFromStorage = true
                 alwaysAutoRefresh = true
             }

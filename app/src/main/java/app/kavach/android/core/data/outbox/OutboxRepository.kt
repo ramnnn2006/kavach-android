@@ -184,7 +184,7 @@ class OutboxRepository @Inject constructor(
     suspend fun flush(): FlushResult = flushLock.withLock {
         db.awaitSession()
         val uid = db.knownUserId() ?: return FlushResult()
-        val pending = dao.all().filter { it.state != STATE_FAILED && it.userId == uid }
+        val pending = dao.all().filter { it.state != STATE_FAILED && (it.userId == uid || it.userId == null) }
         if (pending.isEmpty()) return FlushResult()
         if (!connectivity.isOnline.value || !db.awaitUsableSession(SESSION_WAIT_MS)) return FlushResult(kept = pending.size)
 
@@ -196,8 +196,15 @@ class OutboxRepository @Inject constructor(
                 result = result.copy(failed = result.failed + 1)
                 continue
             }
+            // An unexplained server error that keeps coming back will not fix itself: stop retrying
+            // and show it as not sent, so the resident calls instead of trusting "will send"
+            if (row.lastErrorCode == ErrorCode.Unknown.name && row.attempts >= MAX_UNKNOWN_ATTEMPTS) {
+                dao.put(row.copy(state = STATE_FAILED))
+                result = result.copy(failed = result.failed + 1)
+                continue
+            }
             try {
-                val incident = incidents.create(report, row.clientId)
+                val incident = incidents.create(withLateNote(report, row.createdAt), row.clientId)
                 result = result.copy(sent = result.sent + 1)
                 markSent(row.clientId, incident)
             } catch (e: CancellationException) {
@@ -217,6 +224,18 @@ class OutboxRepository @Inject constructor(
             }
         }
         result
+    }
+
+    /**
+     * A report that waited in the queue lands as a fresh incident. Say when it was really made,
+     * so responders don't read an old emergency as one happening now.
+     */
+    private fun withLateNote(report: NewIncident, createdAtMs: Long): NewIncident {
+        if (System.currentTimeMillis() - createdAtMs < LATE_AFTER_MS) return report
+        val at = java.time.LocalTime.ofInstant(Instant.ofEpochMilli(createdAtMs), java.time.ZoneId.systemDefault())
+            .truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
+        val note = "[Sent late - reported at $at]"
+        return report.copy(description = listOfNotNull(note, report.description?.takeIf { it.isNotBlank() }).joinToString(" "))
     }
 
     /** Ask WorkManager to flush once the network is up (retries with backoff while items remain). */
@@ -246,5 +265,8 @@ class OutboxRepository @Inject constructor(
         const val STATE_FAILED = "failed"
         /** How long a flush waits for a failing token refresh (it retries every 10 s). */
         const val SESSION_WAIT_MS = 12_000L
+        /** A queued report older than this is marked as sent late. */
+        const val MAX_UNKNOWN_ATTEMPTS = 20
+        const val LATE_AFTER_MS = 5 * 60_000L
     }
 }

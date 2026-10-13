@@ -414,6 +414,7 @@ private fun ReviewStep(
     HoldToSendButton(
         label = stringResource(R.string.resident_hold_to_send),
         holdingLabel = stringResource(R.string.resident_holding),
+        releasedEarlyLabel = stringResource(R.string.resident_hold_released_early),
         onComplete = vm::send,
         enabled = !ui.sending,
     )

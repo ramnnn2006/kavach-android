@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -203,7 +204,16 @@ fun IncidentDetailScreen(navigator: KavachNavigator) {
                     }
 
                     SectionHeader(stringResource(R.string.shared_detail_timeline))
-                    KavachCard { Timeline(events.orEmpty()) }
+                    KavachCard {
+                        val list = events
+                        if (list == null) {
+                            Box(Modifier.fillMaxWidth().padding(Spacing.sm), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
+                            }
+                        } else {
+                            Timeline(list)
+                        }
+                    }
                 }
 
                 when (if (dialogAllowed) openDialog else null) {
@@ -349,7 +359,20 @@ private fun ActionButtons(
     val canAdvance = next != null && DetailRules.canAdvance(incident, profile?.id, isAdmin)
     val claimBlock = if (incident.status == IncidentStatus.Pending) DetailRules.claimBlock(profile, incident.type) else null
     val showClaim = incident.status == IncidentStatus.Pending
-    if (!showClaim && !canAdvance) return
+    if (!showClaim && !canAdvance) {
+        // Say why there is nothing to press instead of showing an empty gap
+        val closed = incident.status == IncidentStatus.Resolved || incident.status == IncidentStatus.Cancelled
+        val text = when {
+            closed -> stringResource(R.string.shared_detail_closed)
+            incident.assignedName != null && incident.assignedTo != profile?.id ->
+                stringResource(R.string.shared_detail_assigned_toast, incident.assignedName)
+            else -> null
+        }
+        if (text != null) {
+            Text(text, style = MaterialTheme.typography.bodyMedium, color = KavachTheme.colors.textMuted)
+        }
+        return
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
         if (showClaim) {

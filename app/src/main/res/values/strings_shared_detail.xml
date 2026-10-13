@@ -11,4 +11,5 @@
     <!-- Assign dialog: how many active alerts the responder already has -->
     <string name="shared_d_active_load">%1$d active</string>
     <string name="shared_d_team_status_load">%1$s · %2$s · %3$s</string>
+    <string name="shared_detail_closed">This incident is closed.</string>
 </resources>

@@ -82,12 +82,47 @@ class AlertActionReceiver : BroadcastReceiver() {
             )
             notifier.showResult(tag, link, title, body, timeout = null)
         } catch (e: TimeoutCancellationException) {
-            fail(context, notifier, action, tag, link, KavachException(ErrorCode.Timeout))
+            if (action == ACTION_CLAIM) {
+                // The request may still have reached the server. Look before reporting a failure,
+                // outside the broadcast's short time limit.
+                notifier.showResult(tag, link, context.getString(R.string.alerts_claim_working), "", timeout = null)
+                entry.appScope().launch { verifyClaim(context, entry, notifier, tag, link, incidentId) }
+            } else {
+                fail(context, notifier, action, tag, link, KavachException(ErrorCode.Timeout))
+            }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             Log.w("KavachAlerts", "Notification action failed", e)
             fail(context, notifier, action, tag, link, e.toKavach(entry.db().isOnline))
+        }
+    }
+
+    /** After a timed-out claim: if the incident is now mine, the claim went through. */
+    private suspend fun verifyClaim(
+        context: Context, entry: AlertsEntryPoint, notifier: AlertNotifier, tag: String, link: DeepLink, incidentId: String,
+    ) {
+        val mine = try {
+            withTimeout(20_000L) {
+                entry.db().awaitSession()
+                val me = entry.session().currentUserId
+                me != null && entry.incidents().get(incidentId)?.assignedTo == me
+            }
+        } catch (e: CancellationException) {
+            if (e is TimeoutCancellationException) false else throw e
+        } catch (e: Exception) {
+            false
+        }
+        if (mine) {
+            entry.session().currentUserId?.let { entry.store().claim("inc:$incidentId:assigned:$it") }
+            notifier.showResult(
+                tag, link,
+                context.getString(R.string.alerts_claim_done_title),
+                context.getString(R.string.alerts_claim_done_body),
+                timeout = null,
+            )
+        } else {
+            fail(context, notifier, ACTION_CLAIM, tag, link, KavachException(ErrorCode.Timeout))
         }
     }
 

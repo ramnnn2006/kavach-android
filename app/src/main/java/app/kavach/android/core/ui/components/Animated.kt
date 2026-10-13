@@ -26,6 +26,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
@@ -85,8 +87,12 @@ fun HoldToSendButton(
     tone: Color = KavachTheme.colors.danger,
     holdMillis: Int = 1000,
     height: Dp = 64.dp,
+    /** Shown for a moment after an early release, so a quick tap doesn't look broken. */
+    releasedEarlyLabel: String? = null,
 ) {
     val progress = remember { Animatable(0f) }
+    var hint by remember { mutableStateOf(false) }
+    LaunchedEffect(hint) { if (hint) { delay(1600); hint = false } }
     val scope = rememberCoroutineScope()
     val haptics = rememberHaptics()
     // The gesture below outlives recompositions: always call the latest callback
@@ -133,6 +139,8 @@ fun HoldToSendButton(
                         // Released early, moved off, scrolled, or this gesture was cancelled
                         if (hold.isActive) {
                             hold.cancel()
+                            hint = true
+                            haptics.tick()
                             scope.launch { progress.animateTo(0f, tween(150)) }
                         }
                     }
@@ -142,7 +150,7 @@ fun HoldToSendButton(
     ) {
         Box(Modifier.align(Alignment.CenterStart).fillMaxHeight().fillMaxWidth(progress.value).background(tone))
         Text(
-            if (holding) holdingLabel else label,
+            if (holding) holdingLabel else if (hint && releasedEarlyLabel != null) releasedEarlyLabel else label,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = if (progress.value > 0.5f) KavachTheme.colors.onAccent else toneText(tone),

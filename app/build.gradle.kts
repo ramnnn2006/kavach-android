@@ -33,6 +33,20 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Optional release key (git-ignored kavach.properties): release.storeFile, release.storePassword,
+    // release.keyAlias, release.keyPassword. Without it the release build signs with the debug key.
+    val releaseKeyFile = kavachProp("release.storeFile")
+    signingConfigs {
+        if (releaseKeyFile.isNotBlank()) {
+            create("release") {
+                storeFile = rootProject.file(releaseKeyFile)
+                storePassword = kavachProp("release.storePassword")
+                keyAlias = kavachProp("release.keyAlias")
+                keyPassword = kavachProp("release.keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
@@ -42,8 +56,9 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Not on the Play Store: sign with the debug key until a release key exists.
-            signingConfig = signingConfigs.getByName("debug")
+            isDebuggable = false
+            // Not on the Play Store: sign with the debug key until a release key is configured.
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
 
@@ -99,6 +114,7 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.work.runtime.ktx)
     implementation(libs.datastore.preferences)
+    implementation(libs.security.crypto)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)

@@ -250,6 +250,9 @@ class AlertEngine @Inject constructor(
      * key not seen before.
      */
     private suspend fun deliver(user: AlertUser, events: List<AlertEvent>, source: String, first: Boolean) {
+        // Notifications blocked: leave every event unclaimed and last-seen untouched, so they are
+        // shown once the person allows notifications instead of being swallowed
+        if (!notifier.canNotify()) return
         val now = Instant.now()
         val cutoff = if (first) AlertPolicy.cutoff(store.lastSeen(source)) else null
         val fresh = AlertPolicy.fresh(events, store.seenKeys(), cutoff, now)
@@ -267,8 +270,21 @@ class AlertEngine @Inject constructor(
             val shown = resolve(user, event) ?: continue
             byTag[shown.tag] = shown
         }
-        for (event in byTag.values) notifier.show(event, user)
-        store.setLastSeen(source, now)
+        var allShown = true
+        for (event in byTag.values) {
+            try {
+                notifier.show(event, user)
+            } catch (e: CancellationException) {
+                store.release(event.key)
+                throw e
+            } catch (e: Exception) {
+                // Not shown: give the claim back so the next snapshot or catch-up run retries it
+                Log.w(TAG, "Could not show an alert", e)
+                store.release(event.key)
+                allShown = false
+            }
+        }
+        if (allShown) store.setLastSeen(source, now)
     }
 
     private suspend fun resolve(user: AlertUser, event: AlertEvent): AlertEvent? {

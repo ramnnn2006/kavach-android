@@ -61,6 +61,8 @@ fun Throwable.toKavach(online: Boolean = true): KavachException {
             code == "PGRST116" -> KavachException(ErrorCode.NotFound, msg, this)
             code == "23505" -> KavachException(ErrorCode.Duplicate, msg, this)
             code == "23514" || code == "22P02" || code == "23502" -> KavachException(ErrorCode.Invalid, msg, this)
+            // Other constraint (23xxx, e.g. a missing zone) and bad-data (22xxx) errors never succeed on retry
+            code?.let { it.startsWith("23") || it.startsWith("22") } == true -> KavachException(ErrorCode.Invalid, msg, this)
             else -> KavachException(ErrorCode.Unknown, msg, this)
         }
     }
@@ -99,7 +101,7 @@ fun Throwable.messageRes(): Int {
     val e = this as? KavachException ?: return R.string.common_error_generic
     return when (e.code) {
         ErrorCode.Offline -> R.string.common_error_offline
-        ErrorCode.Timeout -> R.string.common_error_offline
+        ErrorCode.Timeout -> R.string.common_error_slow
         ErrorCode.Forbidden -> R.string.common_error_forbidden
         ErrorCode.NotFound -> R.string.common_error_not_found
         ErrorCode.AlreadyClaimed -> R.string.common_err_already_claimed

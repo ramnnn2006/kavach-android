@@ -66,4 +66,5 @@
     <string name="alerts_coming_done_title">Thank you, you are marked as coming</string>
     <string name="alerts_coming_done_body">The team can see that help is on the way.</string>
     <string name="alerts_action_failed_title">That didn\'t go through</string>
+    <string name="alerts_locked_body">Open Kavach to see the details</string>
 </resources>

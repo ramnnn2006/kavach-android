@@ -62,6 +62,13 @@ class AlertStateStore @Inject constructor(@ApplicationContext context: Context) 
         }
     }
 
+    /** Takes back a [claim] whose notification could not be shown, so a later run tries again. */
+    fun release(key: String) {
+        synchronized(lock) {
+            if (seenLocked().remove(key) != null) prefs.edit().remove(SEEN + key).apply()
+        }
+    }
+
     /**
      * Records keys without showing anything (baseline), and refreshes the time of keys that are
      * still candidates when it is older than [TOUCH] (so they are not pruned while still in use).
