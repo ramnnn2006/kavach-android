@@ -54,7 +54,7 @@
     <string name="responder_mark_done_title">Mark this check done?</string>
     <string name="responder_mark_done_text">%1$s. The next due date moves forward on its own.</string>
     <string name="responder_check_note_label">Note (optional)</string>
-    <string name="responder_check_note_placeholder">e.g. Tank at 80%, battery OK</string>
+    <string name="responder_check_note_placeholder">e.g. Tank full, battery OK</string>
     <string name="responder_check_logged_toast">Done. The next due date has moved forward.</string>
     <string name="responder_check_logged_due_toast">Done. Next due %1$s.</string>
     <string name="responder_checks_empty_title">No checks for your specialties</string>

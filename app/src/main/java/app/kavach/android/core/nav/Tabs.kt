@@ -2,7 +2,7 @@ package app.kavach.android.core.nav
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.FactCheck
+import androidx.compose.material.icons.automirrored.rounded.FactCheck
 import androidx.compose.material.icons.automirrored.rounded.ListAlt
 import androidx.compose.material.icons.rounded.Apartment
 import androidx.compose.material.icons.rounded.Build
@@ -33,7 +33,7 @@ object Tabs {
     )
     val responder = listOf(
         Tab(Routes.ResponderAlerts, Icons.Rounded.Notifications, R.string.nav_alerts),
-        Tab(Routes.ResponderChecks, Icons.Rounded.FactCheck, R.string.nav_checks),
+        Tab(Routes.ResponderChecks, Icons.AutoMirrored.Rounded.FactCheck, R.string.nav_checks),
         Tab(Routes.ResponderAssets, Icons.Rounded.Build, R.string.nav_assets),
         Tab(Routes.ResponderHistory, Icons.Rounded.History, R.string.nav_history),
         Tab(Routes.Profile, Icons.Rounded.Person, R.string.nav_profile),
