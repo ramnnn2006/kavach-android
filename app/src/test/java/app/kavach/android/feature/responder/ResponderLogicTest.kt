@@ -85,6 +85,13 @@ class ResponderLogicTest {
         assertEquals(listOf("open-high", "open-old", "open-low"), split.open.map { it.id })
     }
 
+    @Test fun alertAssignedToMeIsMineEvenIfStillPending() {
+        val rows = listOf(incident("a", IncidentStatus.Pending, assignedTo = "me"), incident("b"))
+        val split = splitQueue(rows, "me")
+        assertEquals(listOf("a"), split.mine.map { it.id })
+        assertEquals(listOf("b"), split.open.map { it.id })
+    }
+
     @Test fun queueWithoutKnownUserHasNoMineButKeepsOpen() {
         val split = splitQueue(listOf(incident("a"), incident("b", IncidentStatus.Acknowledged, assignedTo = "x")), null)
         assertTrue(split.mine.isEmpty())

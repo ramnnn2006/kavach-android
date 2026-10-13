@@ -52,4 +52,9 @@ class ErrorsTest {
         assertEquals(expected, parseInstant("2026-10-08 18:04:56+05:30"))
         assertEquals(expected, parseInstant("2026-10-08T12:34:56Z"))
     }
+
+    @Test fun slowRequestShowsTakingLongerMessageNotOffline() {
+        assertEquals(R.string.common_error_slow, KavachException(ErrorCode.Timeout).messageRes())
+        assertEquals(R.string.common_error_offline, KavachException(ErrorCode.Offline).messageRes())
+    }
 }
