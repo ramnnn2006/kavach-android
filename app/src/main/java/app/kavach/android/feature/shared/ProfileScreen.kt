@@ -1,5 +1,7 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -69,8 +71,7 @@ import app.kavach.android.core.ui.theme.Spacing
 
 /**
  * Profile for every role (Profile.jsx). Residents also edit safety information and the first
- * responder skill; staff see duty and specialties. Language, dark mode and text size follow the
- * system. Shown as a bottom tab for residents and responders (no back arrow) and pushed
+ * responder skill; staff see duty and specialties. Language follows the system; appearance and text size can be changed in Settings. Shown as a bottom tab for residents and responders (no back arrow) and pushed
  * from Admin "More" (back arrow).
  */
 @OptIn(ExperimentalLayoutApi::class)
@@ -78,6 +79,7 @@ import app.kavach.android.core.ui.theme.Spacing
 fun ProfileScreen(navigator: KavachNavigator) {
     val vm: ProfileViewModel = hiltViewModel()
     val profile by vm.profile.collectAsStateWithLifecycle()
+    val reports by vm.myReports.collectAsStateWithLifecycle()
     val alertsEnabled by vm.alertsEnabled.collectAsStateWithLifecycle()
     val alertSound by vm.alertSound.collectAsStateWithLifecycle()
     val queued by vm.queuedReports.collectAsStateWithLifecycle()
@@ -87,10 +89,25 @@ fun ProfileScreen(navigator: KavachNavigator) {
     val context = LocalContext.current
     MessageEffect(vm.messages.flow)
 
-    // Re-checked on return from system settings
     var notificationsOn by remember { mutableStateOf(context.notificationsAllowed()) }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { notificationsOn = context.notificationsAllowed() }
+    ProfileContent(navigator, profile, reports, alertsEnabled, alertSound, queued, busy, dutyPending,
+        signingOut, notificationsOn, vm::savePersonal, vm::saveSafety, vm::setSkill, vm::setOnDuty,
+        vm::setAlertsEnabled, vm::setAlertSound, vm::signOut)
+}
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+internal fun ProfileContent(navigator: KavachNavigator, profile: Profile?,
+    reports: app.kavach.android.core.data.remote.Loadable<List<app.kavach.android.core.data.model.Incident>>,
+    alertsEnabled: Boolean, alertSound: Boolean, queued: Int, busy: ProfileBusy?,
+    dutyPending: Boolean?, signingOut: Boolean, notificationsOn: Boolean,
+    savePersonal: (String, String) -> Unit, saveSafety: (Vulnerability) -> Unit,
+    setSkill: (FirstResponderSkill?) -> Unit, setOnDuty: (Boolean) -> Unit,
+    setAlertsEnabled: (Boolean) -> Unit, setAlertSound: (Boolean) -> Unit, signOut: () -> Unit) {
+    val context = LocalContext.current
+    var editPersonal by rememberSaveable { mutableStateOf(false) }
+    var editSafety by rememberSaveable { mutableStateOf(false) }
     var confirmLogOut by rememberSaveable { mutableStateOf(false) }
     val me = profile
 
@@ -111,13 +128,15 @@ fun ProfileScreen(navigator: KavachNavigator) {
                 .imePadding()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = Spacing.screen)
-                .padding(bottom = Spacing.lg),
+                .padding(bottom = Spacing.lg + app.kavach.android.core.ui.components.LocalFloatingBarInset.current),
         ) {
-            HeroCard(me)
+            SocialProfileHeader(me, reports, navigator, onEdit = { editPersonal = !editPersonal }, onSafety = { editSafety = !editSafety })
 
+            if (editPersonal) {
             SectionHeader(stringResource(R.string.shared_profile_section_personal))
-            PersonalCard(me, busy = busy == ProfileBusy.Personal, onSave = vm::savePersonal)
+            PersonalCard(me, busy = busy == ProfileBusy.Personal, onSave = savePersonal)
             Footnote(stringResource(R.string.shared_profile_phone_hint))
+            }
 
             if (me.role == UserRole.Resident) {
                 SectionHeader(stringResource(R.string.common_home))
@@ -126,12 +145,14 @@ fun ProfileScreen(navigator: KavachNavigator) {
                     ListRow(title = home.ifBlank { stringResource(R.string.shared_profile_home_none) })
                 }
 
+                if (editSafety) {
                 SectionHeader(stringResource(R.string.shared_profile_section_safety))
-                SafetyCard(me.vulnerability, busy = busy == ProfileBusy.Safety, onSave = vm::saveSafety)
+                SafetyCard(me.vulnerability, busy = busy == ProfileBusy.Safety, onSave = saveSafety)
                 Footnote(stringResource(R.string.shared_profile_safety_explain))
+                }
 
                 SectionHeader(stringResource(R.string.shared_profile_section_fr))
-                SkillCard(me.firstResponderSkill, busy = busy == ProfileBusy.Skill, onSelect = vm::setSkill)
+                SkillCard(me.firstResponderSkill, busy = busy == ProfileBusy.Skill, onSelect = setSkill)
                 Footnote(stringResource(R.string.shared_profile_fr_explain))
             } else {
                 SectionHeader(stringResource(R.string.shared_profile_section_duty))
@@ -139,7 +160,7 @@ fun ProfileScreen(navigator: KavachNavigator) {
                     me,
                     onDuty = dutyPending ?: me.onDuty,
                     busy = busy == ProfileBusy.Duty,
-                    onDutyChange = vm::setOnDuty,
+                    onDutyChange = setOnDuty,
                 )
                 Footnote(
                     stringResource(
@@ -148,6 +169,14 @@ fun ProfileScreen(navigator: KavachNavigator) {
                 )
             }
 
+            SectionHeader(stringResource(R.string.settings_title))
+            KavachCard(contentPadding = PaddingValues(0.dp)) {
+                ListRow(
+                    title = stringResource(R.string.settings_title),
+                    subtitle = stringResource(R.string.settings_summary),
+                    onClick = hapticClick({ navigator.navigate(Routes.Settings) }),
+                )
+            }
             SectionHeader(stringResource(R.string.shared_profile_section_alerts))
             KavachCard(contentPadding = PaddingValues(0.dp)) {
                 SwitchRow(
@@ -156,14 +185,14 @@ fun ProfileScreen(navigator: KavachNavigator) {
                         if (alertsEnabled) R.string.shared_profile_alerts_background_on else R.string.shared_profile_alerts_background_off,
                     ),
                     checked = alertsEnabled,
-                    onCheckedChange = vm::setAlertsEnabled,
+                    onCheckedChange = setAlertsEnabled,
                 )
                 GroupDivider()
                 SwitchRow(
                     title = stringResource(R.string.shared_profile_alert_sound),
                     hint = stringResource(R.string.shared_profile_alert_sound_hint),
                     checked = alertSound,
-                    onCheckedChange = vm::setAlertSound,
+                    onCheckedChange = setAlertSound,
                 )
                 GroupDivider()
                 ListRow(
@@ -176,7 +205,7 @@ fun ProfileScreen(navigator: KavachNavigator) {
                             tint = KavachTheme.colors.textTertiary,
                         )
                     },
-                    onClick = { context.openAppNotificationSettings() },
+                    onClick = hapticClick({ context.openAppNotificationSettings() }),
                 )
             }
             if (!notificationsOn) {
@@ -188,7 +217,7 @@ fun ProfileScreen(navigator: KavachNavigator) {
                 )
             }
             if (android.os.Build.VERSION.SDK_INT >= 34) {
-                TextButton(onClick = { context.openFullScreenAlertSettings() }) {
+                TextButton(onClick = hapticClick({ context.openFullScreenAlertSettings() })) {
                     Text(stringResource(R.string.shared_full_screen_title))
                 }
             }
@@ -206,7 +235,7 @@ fun ProfileScreen(navigator: KavachNavigator) {
                             tint = KavachTheme.colors.textTertiary,
                         )
                     },
-                    onClick = { navigator.navigate(Routes.Walkthrough) },
+                    onClick = hapticClick({ navigator.navigate(Routes.Walkthrough) }),
                 )
                 GroupDivider()
                 ListRow(
@@ -239,7 +268,7 @@ fun ProfileScreen(navigator: KavachNavigator) {
             destructive = true,
             onConfirm = {
                 confirmLogOut = false
-                vm.signOut()
+                signOut()
             },
             onDismiss = { confirmLogOut = false },
         )
@@ -342,8 +371,8 @@ private fun ActionRow(saveLabel: String, busy: Boolean, onCancel: () -> Unit, on
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        TextButton(onClick = onCancel, enabled = !busy) { Text(stringResource(R.string.common_cancel)) }
-        ActionButton(text = saveLabel, onClick = onSave, busy = busy, modifier = Modifier.weight(1f, fill = false))
+        TextButton(onClick = hapticClick(onCancel), enabled = !busy) { Text(stringResource(R.string.common_cancel)) }
+        ActionButton(text = saveLabel, onClick = hapticClick(onSave), busy = busy, modifier = Modifier.weight(1f, fill = false))
     }
 }
 

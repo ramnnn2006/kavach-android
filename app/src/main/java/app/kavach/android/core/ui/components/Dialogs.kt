@@ -1,5 +1,7 @@
 package app.kavach.android.core.ui.components
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -58,11 +60,11 @@ fun CallButton(
     }
     when (style) {
         CallButtonStyle.Danger -> Button(
-            onClick = { context.dial(phone) }, modifier = m,
+            onClick = hapticClick({ context.dial(phone) }), modifier = m,
             colors = ButtonDefaults.buttonColors(containerColor = KavachTheme.colors.danger, contentColor = KavachTheme.colors.onAccent),
         ) { content() }
-        CallButtonStyle.Primary -> Button(onClick = { context.dial(phone) }, modifier = m) { content() }
-        CallButtonStyle.Secondary -> FilledTonalButton(onClick = { context.dial(phone) }, modifier = m) { content() }
+        CallButtonStyle.Primary -> Button(onClick = hapticClick({ context.dial(phone) }), modifier = m) { content() }
+        CallButtonStyle.Secondary -> FilledTonalButton(onClick = hapticClick({ context.dial(phone) }), modifier = m) { content() }
     }
 }
 
@@ -83,16 +85,16 @@ fun ConfirmDialog(
         text = text?.let { { Text(it) } },
         confirmButton = {
             TextButton(
-                onClick = onConfirm,
+                onClick = hapticClick(onConfirm),
                 colors = if (destructive) ButtonDefaults.textButtonColors(contentColor = KavachTheme.colors.danger) else ButtonDefaults.textButtonColors(),
             ) { Text(confirmLabel) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(dismissLabel) } },
+        dismissButton = { TextButton(onClick = hapticClick(onDismiss)) { Text(dismissLabel) } },
     )
 }
 
 /** Outlined secondary action (used next to primary buttons). */
 @Composable
 fun SecondaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
-    OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled) { Text(text) }
+    OutlinedButton(onClick = hapticClick(onClick), modifier = modifier, enabled = enabled) { Text(text) }
 }

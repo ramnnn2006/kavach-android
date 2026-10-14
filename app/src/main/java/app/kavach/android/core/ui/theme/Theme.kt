@@ -14,11 +14,11 @@ import androidx.compose.ui.unit.dp
 
 // Material roles from tokens.css: grouped background (--bg), cards (--surface), labels, separator.
 private val LightScheme = lightColorScheme(
-    primary = Color(0xFF0062CC),
+    primary = Color(0xFF192D54),
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFD6E6FA),
+    primaryContainer = Color(0xFFE5EBF5),
     onPrimaryContainer = Color(0xFF001D3D),
-    secondary = Color(0xFF5856D6),
+    secondary = Color(0xFF192D54),
     onSecondary = Color.White,
     secondaryContainer = Color(0x1F787880),
     onSecondaryContainer = Color.Black,
@@ -26,9 +26,9 @@ private val LightScheme = lightColorScheme(
     onError = Color.White,
     errorContainer = Color(0xFFFFE3E1),
     onErrorContainer = Color(0xFF5C0A05),
-    background = Color(0xFFF2F2F7),
+    background = Color(0xFFF4F5F8),
     onBackground = Color.Black,
-    surface = Color(0xFFF2F2F7),
+    surface = Color(0xFFF4F5F8),
     onSurface = Color.Black,
     surfaceVariant = Color(0xFFE5E5EA),
     onSurfaceVariant = Color(0xC23C3C43),
@@ -44,8 +44,8 @@ private val LightScheme = lightColorScheme(
 )
 
 private val DarkScheme = darkColorScheme(
-    primary = Color(0xFF0069D1),
-    onPrimary = Color.White,
+    primary = Color(0xFFABC3EA),
+    onPrimary = Color(0xFF10233F),
     primaryContainer = Color(0xFF0B3A6E),
     onPrimaryContainer = Color(0xFFD6E6FA),
     secondary = Color(0xFF5E5CE6),
@@ -74,8 +74,8 @@ private val DarkScheme = darkColorScheme(
 private val KavachShapes = Shapes(
     extraSmall = RoundedCornerShape(6.dp),
     small = RoundedCornerShape(8.dp),    // --r-sm
-    medium = RoundedCornerShape(12.dp),  // --r-md (cards)
-    large = RoundedCornerShape(14.dp),   // --r-lg
+    medium = RoundedCornerShape(24.dp),  // --r-md (cards)
+    large = RoundedCornerShape(28.dp),   // --r-lg
     extraLarge = RoundedCornerShape(20.dp),
 )
 

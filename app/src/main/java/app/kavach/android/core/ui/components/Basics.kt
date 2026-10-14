@@ -1,5 +1,9 @@
 package app.kavach.android.core.ui.components
 
+import app.kavach.android.core.ui.components.hapticClick
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -78,16 +82,19 @@ fun KavachScaffold(
         topBar = {
             TopAppBar(
                 title = {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Icon(painterResource(R.drawable.ic_brand), contentDescription = stringResource(R.string.app_name), tint = Color.Unspecified, modifier = Modifier.size(28.dp))
                     Column {
-                        Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() })
+                        Text(title, style = MaterialTheme.typography.headlineSmall, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() })
                         if (subtitle != null) {
                             Text(subtitle, style = MaterialTheme.typography.bodySmall, color = KavachTheme.colors.textMuted, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
+                    }
                 },
                 navigationIcon = {
                     if (onBack != null) {
-                        IconButton(onClick = onBack) {
+                        IconButton(onClick = hapticClick(onBack)) {
                             Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.common_back))
                         }
                     }
@@ -106,13 +113,13 @@ fun KavachScaffold(
 @Composable
 fun SectionHeader(text: String, modifier: Modifier = Modifier, trailing: @Composable (() -> Unit)? = null) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(start = Spacing.xs, end = Spacing.xs, top = Spacing.md, bottom = Spacing.sm),
+        modifier = modifier.fillMaxWidth().padding(start = Spacing.xs, end = Spacing.xs, top = Spacing.sm, bottom = Spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text,
-            style = MaterialTheme.typography.titleSmall,
-            color = KavachTheme.colors.textMuted,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f).semantics { heading() },
         )
         trailing?.invoke()
@@ -128,7 +135,7 @@ fun KavachCard(
     contentPadding: PaddingValues = PaddingValues(Spacing.md),
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+    val colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.94f))
     val body: @Composable () -> Unit = {
         // The stripe is drawn, not laid out: a fillMaxHeight() box has no height in a lazy list
         // (unbounded constraints) and would stretch the card in a bounded one
@@ -142,9 +149,9 @@ fun KavachCard(
         Column(Modifier.fillMaxWidth().then(stripe).padding(contentPadding), content = content)
     }
     if (onClick != null) {
-        Card(onClick = onClick, modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, colors = colors) { body() }
+        Card(onClick = hapticClick(onClick), modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, colors = colors, border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))) { body() }
     } else {
-        Card(modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, colors = colors) { body() }
+        Card(modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, colors = colors, border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))) { body() }
     }
 }
 
@@ -162,7 +169,7 @@ fun ListRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
+            .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = hapticClick(onClick)) else Modifier)
             .heightIn(min = 48.dp)
             .padding(horizontal = Spacing.md, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -250,7 +257,7 @@ fun EscalationBadge(level: Int, modifier: Modifier = Modifier) {
 /** Big number + label (Stat). */
 @Composable
 fun StatTile(value: String, label: String, modifier: Modifier = Modifier, tone: Color = Color.Unspecified, onClick: (() -> Unit)? = null) {
-    KavachCard(modifier = modifier, onClick = onClick) {
+    KavachCard(modifier = modifier, onClick = if (onClick != null) hapticClick(onClick) else null) {
         Text(value, style = MaterialTheme.typography.headlineMedium, color = if (tone.isSpecified) toneText(tone) else tone)
         Spacer(Modifier.height(2.dp))
         Text(label, style = MaterialTheme.typography.bodySmall, color = KavachTheme.colors.textMuted)

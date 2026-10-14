@@ -1,5 +1,7 @@
 package app.kavach.android.feature.responder
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -111,7 +113,7 @@ internal fun AssetDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { onSave(state, note.trim(), context.getString(state.labelRes())) },
+                onClick = hapticClick({ onSave(state, note.trim(), context.getString(state.labelRes())) }),
                 enabled = !busy,
             ) {
                 if (busy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
@@ -119,7 +121,7 @@ internal fun AssetDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !busy) { Text(stringResource(R.string.common_cancel)) }
+            TextButton(onClick = hapticClick(onDismiss), enabled = !busy) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }

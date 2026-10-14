@@ -16,6 +16,8 @@ val kavachProps = Properties().apply {
 }
 fun kavachProp(name: String): String = kavachProps.getProperty(name, "")
 
+val localTestRelease = providers.gradleProperty("kavach.testRelease").orNull == "true"
+
 android {
     namespace = "app.kavach.android"
     compileSdk = 35
@@ -31,6 +33,12 @@ android {
         buildConfigField("String", "SUPABASE_KEY", "\"${kavachProp("supabase.publishableKey")}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Optional device-targeted delivery; normal builds keep all supported ABIs.
+        providers.gradleProperty("kavach.targetAbi").orNull?.let { abi ->
+            require(abi == "arm64-v8a") { "Unsupported delivery ABI: $abi" }
+            ndk { abiFilters += abi }
+        }
+
     }
 
     // Optional release key (git-ignored kavach.properties): release.storeFile, release.storePassword,
@@ -57,8 +65,9 @@ android {
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             isDebuggable = false
-            // Never ship a release signed by the public debug key.
-            signingConfig = signingConfigs.findByName("release")
+            // Production releases require an owner key; test signing is explicit opt-in only.
+            signingConfig = if (localTestRelease) signingConfigs.getByName("debug") else signingConfigs.findByName("release")
+            if (localTestRelease) versionNameSuffix = "-test-release"
         }
     }
 
@@ -85,6 +94,7 @@ ksp {
 }
 
 dependencies {
+    implementation("dev.chrisbanes.haze:haze:1.6.10")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.activity.compose)
@@ -131,7 +141,7 @@ dependencies {
 
 // Keep debug/test configuration usable without a release secret.
 gradle.taskGraph.whenReady {
-    if (allTasks.any { it.name.contains("Release", ignoreCase = true) && !it.name.startsWith("test") }) {
+    if (!localTestRelease && allTasks.any { it.name.contains("Release", ignoreCase = true) && !it.name.startsWith("test") }) {
         require(kavachProp("release.storeFile").isNotBlank() &&
             listOf("release.storePassword", "release.keyAlias", "release.keyPassword").all { kavachProp(it).isNotBlank() }) {
             "Release signing is not configured. Set release.storeFile, release.storePassword, release.keyAlias and release.keyPassword in kavach.properties."

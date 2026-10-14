@@ -1,5 +1,7 @@
 package app.kavach.android.feature.responder
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -87,7 +89,7 @@ private fun HistoryList(
     val context = LocalContext.current
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = Spacing.screen, vertical = Spacing.sm),
+        contentPadding = PaddingValues(start = Spacing.screen, end = Spacing.screen, top = Spacing.sm, bottom = Spacing.sm + app.kavach.android.core.ui.components.LocalFloatingBarInset.current),
         verticalArrangement = Arrangement.spacedBy(Spacing.sm),
     ) {
         if (list.isEmpty()) {
@@ -98,7 +100,7 @@ private fun HistoryList(
                         title = stringResource(R.string.responder_history_empty_title),
                         text = stringResource(R.string.responder_history_empty_text),
                         action = {
-                            if (showGoToAlerts) SecondaryButton(stringResource(R.string.responder_go_to_alerts), onClick = onGoToAlerts)
+                            if (showGoToAlerts) SecondaryButton(stringResource(R.string.responder_go_to_alerts), onClick = hapticClick(onGoToAlerts))
                         },
                     )
                 }
@@ -115,7 +117,7 @@ private fun HistoryList(
             }
             item(key = "jobs-header") { SectionHeader(stringResource(R.string.responder_history_jobs)) }
             items(list, key = { it.id }) { inc ->
-                HistoryCard(inc, onClick = { onOpen(inc.id) })
+                HistoryCard(inc, onClick = hapticClick({ onOpen(inc.id) }))
             }
         }
     }
@@ -138,7 +140,7 @@ private fun HistoryCard(inc: Incident, onClick: () -> Unit) {
     } else {
         stringResource(inc.status.labelRes(true))
     }
-    KavachCard(modifier = Modifier.sharedBoundsFor(incidentSharedKey(inc.id)), onClick = onClick) {
+    KavachCard(modifier = Modifier.sharedBoundsFor(incidentSharedKey(inc.id)), onClick = hapticClick(onClick)) {
         Row(
             Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,

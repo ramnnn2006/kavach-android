@@ -2,6 +2,8 @@ package app.kavach.android.core.data.prefs
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import app.kavach.android.core.data.model.UserRole
@@ -20,6 +22,9 @@ private val Context.settings by preferencesDataStore(name = "kavach_settings")
 @Singleton
 class SettingsStore @Inject constructor(@ApplicationContext private val context: Context) {
     private object Keys {
+        val glass = booleanPreferencesKey("appearance_glass")
+        val theme = stringPreferencesKey("appearance_theme")
+        val textScale = floatPreferencesKey("appearance_text_scale")
         val setupDone = booleanPreferencesKey("setup_done")
         val alertsEnabled = booleanPreferencesKey("alerts_service_enabled")
         val alertSound = booleanPreferencesKey("alert_sound")
@@ -45,6 +50,16 @@ class SettingsStore @Inject constructor(@ApplicationContext private val context:
     suspend fun setSetupDone(done: Boolean) = context.settings.edit { it[Keys.setupDone] = done }
     suspend fun setAlertsEnabled(on: Boolean) = context.settings.edit { it[Keys.alertsEnabled] = on }
     suspend fun setAlertSound(on: Boolean) = context.settings.edit { it[Keys.alertSound] = on }
+
+    val glass: Flow<Boolean> = context.settings.data.map { it[Keys.glass] ?: true }.distinctUntilChanged()
+    suspend fun setGlass(on: Boolean) = context.settings.edit { it[Keys.glass] = on }
+
+    val theme: Flow<String> = context.settings.data.map { it[Keys.theme] ?: "system" }.distinctUntilChanged()
+    val textScale: Flow<Float> = context.settings.data.map { AccessibilityRules.textScale(it[Keys.textScale] ?: 1f) }.distinctUntilChanged()
+    suspend fun setTheme(value: String) = context.settings.edit {
+        it[Keys.theme] = AccessibilityRules.theme(value)
+    }
+    suspend fun setTextScale(value: Float) = context.settings.edit { it[Keys.textScale] = AccessibilityRules.textScale(value) }
 
     suspend fun isSetupDone(): Boolean = setupDone.first()
 }

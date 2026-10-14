@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -274,7 +276,7 @@ fun CommandBoardScreen(navigator: KavachNavigator) {
                     if (onDG) colors.orange else colors.green,
                 )
                 BoardClock(now)
-                OutlinedButton(onClick = navigator::back) {
+                OutlinedButton(onClick = hapticClick(navigator::back)) {
                     Icon(Icons.Rounded.Close, contentDescription = null, modifier = Modifier.size(18.dp))
                     Text(stringResource(R.string.admin_exit), modifier = Modifier.padding(start = Spacing.sm))
                 }
@@ -295,7 +297,7 @@ fun CommandBoardScreen(navigator: KavachNavigator) {
                         BoardAlert(
                             incident = incident,
                             now = now,
-                            onClick = { navigator.navigate(Routes.IncidentDetail(incident.id)) },
+                            onClick = hapticClick({ navigator.navigate(Routes.IncidentDetail(incident.id)) }),
                             modifier = if (reduce) Modifier else Modifier.animateItem(),
                         )
                     }
@@ -314,7 +316,7 @@ fun CommandBoardScreen(navigator: KavachNavigator) {
                         ProgressRow(
                             incident = incident,
                             now = now,
-                            onClick = { navigator.navigate(Routes.IncidentDetail(incident.id)) },
+                            onClick = hapticClick({ navigator.navigate(Routes.IncidentDetail(incident.id)) }),
                             modifier = if (reduce) Modifier else Modifier.animateItem(),
                         )
                     }
@@ -374,7 +376,7 @@ private fun BoardAlert(incident: Incident, now: State<Instant>, onClick: () -> U
     val escalated = incident.isEscalated
     KavachCard(
         modifier = modifier.sharedBoundsFor(incidentSharedKey(incident.id)),
-        onClick = onClick,
+        onClick = hapticClick(onClick),
         accent = if (escalated) colors.red else null,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
@@ -433,7 +435,7 @@ private fun ProgressMeta(assignee: String, since: Instant, now: State<Instant>) 
 @Composable
 private fun ProgressRow(incident: Incident, now: State<Instant>, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val colors = KavachTheme.colors
-    KavachCard(modifier = modifier.sharedBoundsFor(incidentSharedKey(incident.id)), onClick = onClick) {
+    KavachCard(modifier = modifier.sharedBoundsFor(incidentSharedKey(incident.id)), onClick = hapticClick(onClick)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             TypeIcon(incident.type, size = 44.dp)
             Column(Modifier.weight(1f)) {

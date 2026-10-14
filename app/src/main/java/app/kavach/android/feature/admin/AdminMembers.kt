@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -229,7 +231,7 @@ fun AdminMembersScreen(navigator: KavachNavigator) {
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { openSheet(MemberSheetState.Add) },
+                onClick = hapticClick({ openSheet(MemberSheetState.Add) }),
                 icon = { Icon(Icons.Rounded.Add, contentDescription = null) },
                 text = { Text(stringResource(R.string.admin_add_member)) },
             )
@@ -260,7 +262,7 @@ fun AdminMembersScreen(navigator: KavachNavigator) {
                         leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                         trailingIcon = if (query.isNotEmpty()) {
                             {
-                                IconButton(onClick = { query = "" }) {
+                                IconButton(onClick = hapticClick({ query = "" })) {
                                     Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.admin_clear_search))
                                 }
                             }
@@ -279,7 +281,7 @@ fun AdminMembersScreen(navigator: KavachNavigator) {
                             text = stringResource(if (searching) R.string.admin_no_match_text else R.string.admin_no_members_text),
                             action = if (searching && all.isNotEmpty()) {
                                 {
-                                    OutlinedButton(onClick = { query = "" }) { Text(stringResource(R.string.admin_clear_search)) }
+                                    OutlinedButton(onClick = hapticClick({ query = "" })) { Text(stringResource(R.string.admin_clear_search)) }
                                 }
                             } else {
                                 null
@@ -320,7 +322,7 @@ fun AdminMembersScreen(navigator: KavachNavigator) {
 private fun ApprovedMemberRow(member: ApprovedMember, onClick: () -> Unit) {
     val context = LocalContext.current
     val signedIn = member.profileId != null
-    KavachCard(onClick = onClick) {
+    KavachCard(onClick = hapticClick(onClick)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             InitialsAvatar(member.fullName)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -499,7 +501,7 @@ private fun MemberFormSheet(
             LaunchedEffect(formErrorRes) { errorView.bringIntoView() }
         }
         if (existing != null) {
-            TextButton(onClick = { confirmRemove = true }, enabled = !busy) {
+            TextButton(onClick = hapticClick({ confirmRemove = true }), enabled = !busy) {
                 Text(stringResource(R.string.admin_remove_from_list), color = KavachTheme.colors.danger)
             }
         }

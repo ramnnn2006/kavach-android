@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -118,7 +120,7 @@ internal fun AssetsPanel(vm: AdminSocietyViewModel) {
         groups.forEach { group ->
             item(key = "group-${group.key}") { SectionHeader(group.zoneName ?: stringResource(R.string.admin_no_zone)) }
             items(group.items, key = { "asset-${it.id}" }) { asset ->
-                AssetRow(asset, now, onClick = { editingId = asset.id })
+                AssetRow(asset, now, onClick = hapticClick({ editingId = asset.id }))
             }
         }
     }
@@ -143,7 +145,7 @@ private fun AssetRow(asset: Asset, now: Instant, onClick: () -> Unit) {
             )
         }
     }
-    KavachCard(onClick = onClick) {
+    KavachCard(onClick = hapticClick(onClick)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             IconTile(asset.kind.icon(), colors.assetKind(asset.kind))
             Column(Modifier.weight(1f)) {
@@ -199,7 +201,7 @@ private fun AssetSheet(asset: Asset, vm: AdminSocietyViewModel, onDismiss: () ->
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 56.dp)
-                    .selectable(selected = state == option, role = Role.RadioButton, onClick = { state = option }),
+                    .selectable(selected = state == option, role = Role.RadioButton, onClick = hapticClick({ state = option })),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -392,7 +394,7 @@ private fun CheckRow(check: ComplianceItem, running: Boolean, onMarkDone: () -> 
                 CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
             } else {
                 TextButton(
-                    onClick = onMarkDone,
+                    onClick = hapticClick(onMarkDone),
                     modifier = Modifier.semantics { contentDescription = doneLabel },
                 ) { Text(stringResource(R.string.admin_mark_done)) }
             }
@@ -453,7 +455,7 @@ internal fun ContactsPanel(vm: AdminSocietyViewModel) {
                         {
                             val editLabel = stringResource(if (editing) R.string.common_done else R.string.admin_m_edit_contacts)
                             TextButton(
-                                onClick = { editing = !editing },
+                                onClick = hapticClick({ editing = !editing }),
                                 modifier = Modifier.semantics { contentDescription = editLabel },
                             ) {
                                 Text(stringResource(if (editing) R.string.common_done else R.string.common_edit))
@@ -469,7 +471,7 @@ internal fun ContactsPanel(vm: AdminSocietyViewModel) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                         if (editing) {
                             IconButton(
-                                onClick = { pendingDelete = contact },
+                                onClick = hapticClick({ pendingDelete = contact }),
                                 enabled = "contact:${contact.id}" !in busy,
                             ) {
                                 Icon(
@@ -538,7 +540,7 @@ internal fun ContactsPanel(vm: AdminSocietyViewModel) {
                     )
                     val adding = "contact-add" in busy
                     Button(
-                        onClick = {
+                        onClick = hapticClick({
                             nameError = name.isBlank()
                             phoneError = !isValidContactPhone(phone)
                             if (!nameError && !phoneError) {
@@ -549,7 +551,7 @@ internal fun ContactsPanel(vm: AdminSocietyViewModel) {
                                     kind = ContactKind.Society
                                 }
                             }
-                        },
+                        }),
                         enabled = !adding,
                         modifier = Modifier.fillMaxWidth(),
                     ) {

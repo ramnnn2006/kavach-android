@@ -32,3 +32,9 @@
     public static int d(...);
     public static int i(...);
 }
+
+# Tink's compile-time Error Prone annotations are absent from the Android runtime.
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn com.google.errorprone.annotations.CheckReturnValue
+-dontwarn com.google.errorprone.annotations.Immutable
+-dontwarn com.google.errorprone.annotations.RestrictedApi

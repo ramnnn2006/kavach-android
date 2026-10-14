@@ -1,5 +1,7 @@
 package app.kavach.android.feature.resident
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -78,24 +80,39 @@ fun MyReportsScreen(navigator: KavachNavigator) {
     val profile by vm.profile.collectAsStateWithLifecycle()
     val now by rememberNow()
 
+    MyReportsContent(navigator, state, showAll, profile, now, vm::retry, vm::showAll)
+}
+
+@Composable
+internal fun MyReportsContent(navigator: KavachNavigator, state: Loadable<List<Incident>>, showAll: Boolean,
+    profile: Profile?, now: java.time.Instant, retry: () -> Unit, setShowAll: (Boolean) -> Unit) {
     KavachScaffold(title = stringResource(R.string.resident_reports_title)) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
+            app.kavach.android.core.ui.components.KavachCard(modifier = Modifier.padding(horizontal = Spacing.screen, vertical = Spacing.sm)) {
+                Text(stringResource(R.string.reports_private_summary), style = androidx.compose.material3.MaterialTheme.typography.titleMedium)
+                state.data?.let { rows ->
+                    Text(stringResource(R.string.reports_activity_summary, rows.count { it.isActive }, rows.count { it.status == app.kavach.android.core.data.model.IncidentStatus.Resolved }), style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
+                }
+                androidx.compose.material3.TextButton(onClick = hapticClick({ navigator.navigate(Routes.ReportType) })) {
+                    Text(stringResource(R.string.resident_report_emergency))
+                }
+            }
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = Spacing.screen, vertical = Spacing.sm),
                 horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
             ) {
                 FilterChip(
                     selected = !showAll,
-                    onClick = { vm.showAll(false) },
+                    onClick = hapticClick({ setShowAll(false) }),
                     label = { Text(stringResource(R.string.resident_tab_active)) },
                 )
                 FilterChip(
                     selected = showAll,
-                    onClick = { vm.showAll(true) },
+                    onClick = hapticClick({ setShowAll(true) }),
                     label = { Text(stringResource(R.string.resident_tab_all)) },
                 )
             }
-            LoadableContent(state, vm::retry, Modifier.weight(1f)) { reports ->
+            LoadableContent(state, retry, Modifier.weight(1f)) { reports ->
                 // Re-sorted only when the list or the tab changes, not on every clock tick
                 val list = remember(reports, showAll) {
                     // "All" is newest first, as on the website (Reports.jsx); "Active" filters it
@@ -109,14 +126,14 @@ fun MyReportsScreen(navigator: KavachNavigator) {
                         action = {
                             SecondaryButton(
                                 text = stringResource(R.string.resident_report_emergency),
-                                onClick = { navigator.navigate(Routes.ReportType) },
+                                onClick = hapticClick({ navigator.navigate(Routes.ReportType) }),
                             )
                         },
                     )
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(horizontal = Spacing.screen, vertical = Spacing.sm),
+                        contentPadding = PaddingValues(start = Spacing.screen, end = Spacing.screen, top = Spacing.sm, bottom = Spacing.sm + app.kavach.android.core.ui.components.LocalFloatingBarInset.current),
                         verticalArrangement = Arrangement.spacedBy(Spacing.sm),
                     ) {
                         items(list, key = { it.id }) { incident ->
@@ -124,7 +141,7 @@ fun MyReportsScreen(navigator: KavachNavigator) {
                                 incident = incident,
                                 profile = profile,
                                 now = now,
-                                onClick = { navigator.navigate(Routes.Tracker(incident.id)) },
+                                onClick = hapticClick({ navigator.navigate(Routes.Tracker(incident.id)) }),
                                 modifier = reorderModifier().sharedBoundsFor(incidentSharedKey(incident.id)),
                             )
                         }

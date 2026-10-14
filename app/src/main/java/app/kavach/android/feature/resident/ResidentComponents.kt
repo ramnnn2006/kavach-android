@@ -1,5 +1,7 @@
 package app.kavach.android.feature.resident
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -175,7 +177,7 @@ fun IncidentRow(
 ) {
     val context = LocalContext.current
     val place = Format.residentPlace(context, incident, profile)
-    KavachCard(modifier = modifier, onClick = onClick) {
+    KavachCard(modifier = modifier, onClick = hapticClick(onClick)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             TypeIcon(incident.type)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
@@ -234,7 +236,7 @@ fun pendingSentenceRes(type: IncidentType): Int =
 @Composable
 fun ActiveReportRow(incident: Incident, now: Instant, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    KavachCard(modifier = modifier, onClick = onClick, accent = KavachTheme.colors.status(incident.status)) {
+    KavachCard(modifier = modifier, onClick = hapticClick(onClick), accent = KavachTheme.colors.status(incident.status)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             TypeIcon(incident.type)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
@@ -307,7 +309,7 @@ fun OutboxNotice(
                 }
                 SecondaryButton(
                     text = stringResource(if (sending) R.string.resident_sending else R.string.resident_send_now),
-                    onClick = onSendNow,
+                    onClick = hapticClick(onSendNow),
                     enabled = !sending,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -325,7 +327,7 @@ fun OutboxNotice(
                     if (callSecurity) {
                         CallButton(securityPhone, stringResource(R.string.common_call_security), style = CallButtonStyle.Danger, fillWidth = true)
                     }
-                    TextButton(onClick = { onDismiss(item.clientId) }) { Text(stringResource(R.string.common_dismiss)) }
+                    TextButton(onClick = hapticClick({ onDismiss(item.clientId) })) { Text(stringResource(R.string.common_dismiss)) }
                 }
             }
         }
@@ -420,7 +422,7 @@ fun MedicalAlertsSection(
                         }
                     } else {
                         Button(
-                            onClick = { onAck(alert.id) },
+                            onClick = hapticClick({ onAck(alert.id) }),
                             enabled = busyId == null,
                             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
                         ) {
@@ -499,7 +501,7 @@ fun SafetyCheckCard(
             Spacer(Modifier.size(Spacing.sm))
             val busy = card.busy
             Button(
-                onClick = { onRespond(SafetyResponseStatus.Safe, note) },
+                onClick = hapticClick({ onRespond(SafetyResponseStatus.Safe, note) }),
                 enabled = busy == null,
                 colors = ButtonDefaults.buttonColors(containerColor = colors.success, contentColor = colors.onAccent),
                 modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
@@ -515,7 +517,7 @@ fun SafetyCheckCard(
             }
             Spacer(Modifier.size(Spacing.sm))
             Button(
-                onClick = { onRespond(SafetyResponseStatus.NeedHelp, note) },
+                onClick = hapticClick({ onRespond(SafetyResponseStatus.NeedHelp, note) }),
                 enabled = busy == null,
                 colors = ButtonDefaults.buttonColors(containerColor = colors.danger, contentColor = colors.onAccent),
                 modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
@@ -530,7 +532,7 @@ fun SafetyCheckCard(
                 Text(stringResource(R.string.resident_sc_need_help))
             }
             if (card.changing) {
-                TextButton(onClick = onKeep) { Text(stringResource(R.string.resident_sc_keep)) }
+                TextButton(onClick = hapticClick(onKeep)) { Text(stringResource(R.string.resident_sc_keep)) }
             }
         } else if (answer != null) {
             Row(
@@ -559,11 +561,11 @@ fun SafetyCheckCard(
                         )
                         val incidentId = answer.incidentId
                         if (incidentId != null) {
-                            TextButton(onClick = { onTrack(incidentId) }) { Text(stringResource(R.string.resident_sc_track_help)) }
+                            TextButton(onClick = hapticClick({ onTrack(incidentId) })) { Text(stringResource(R.string.resident_sc_track_help)) }
                         }
                     }
                 }
-                TextButton(onClick = onChange) { Text(stringResource(R.string.resident_sc_change)) }
+                TextButton(onClick = hapticClick(onChange)) { Text(stringResource(R.string.resident_sc_change)) }
             }
         }
     }
@@ -632,7 +634,7 @@ private fun TipList(tips: List<String>) {
 @Composable
 fun PeopleStepper(value: Int, onChange: (Int) -> Unit, modifier: Modifier = Modifier) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = { onChange((value - 1).coerceAtLeast(1)) }, enabled = value > 1) {
+        IconButton(onClick = hapticClick({ onChange((value - 1).coerceAtLeast(1)) }), enabled = value > 1) {
             Icon(Icons.Rounded.Remove, contentDescription = stringResource(R.string.resident_fewer))
         }
         Text(
@@ -641,7 +643,7 @@ fun PeopleStepper(value: Int, onChange: (Int) -> Unit, modifier: Modifier = Modi
             modifier = Modifier.widthIn(min = 32.dp).semantics { liveRegion = LiveRegionMode.Polite },
             textAlign = TextAlign.Center,
         )
-        IconButton(onClick = { onChange((value + 1).coerceAtMost(ReportRules.MAX_PEOPLE)) }, enabled = value < ReportRules.MAX_PEOPLE) {
+        IconButton(onClick = hapticClick({ onChange((value + 1).coerceAtMost(ReportRules.MAX_PEOPLE)) }), enabled = value < ReportRules.MAX_PEOPLE) {
             Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.resident_more))
         }
     }

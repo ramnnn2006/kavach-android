@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import app.kavach.android.core.ui.components.toneText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -306,7 +308,7 @@ fun AdminSafetyCheckScreen(navigator: KavachNavigator) {
                                     Text(r.note, style = MaterialTheme.typography.bodyMedium, color = KavachTheme.colors.danger)
                                 }
                                 if (r.incidentId != null) {
-                                    TextButton(onClick = { navigator.navigate(Routes.IncidentDetail(r.incidentId)) }) {
+                                    TextButton(onClick = hapticClick({ navigator.navigate(Routes.IncidentDetail(r.incidentId)) })) {
                                         Text(stringResource(R.string.admin_open_alert))
                                     }
                                 }
@@ -452,7 +454,7 @@ private fun LiveCheckCard(
             }
         }
         OutlinedButton(
-            onClick = onEnd,
+            onClick = hapticClick(onEnd),
             enabled = !busy,
             modifier = Modifier.fillMaxWidth().padding(top = Spacing.md),
         ) { Text(stringResource(R.string.admin_end_check), color = colors.danger) }
@@ -613,10 +615,10 @@ private fun StartForm(zones: List<Zone>, busy: Boolean, vm: AdminSafetyCheckView
             )
             presets.forEach { preset ->
                 OutlinedButton(
-                    onClick = {
+                    onClick = hapticClick({
                         message = preset
                         errorRes = null
-                    },
+                    }),
                     modifier = Modifier.fillMaxWidth(),
                 ) { Text(preset, textAlign = TextAlign.Start, modifier = Modifier.weight(1f)) }
             }
@@ -625,14 +627,14 @@ private fun StartForm(zones: List<Zone>, busy: Boolean, vm: AdminSafetyCheckView
                 Text(stringResource(shown), color = KavachTheme.colors.danger, style = MaterialTheme.typography.bodyMedium)
             }
             Button(
-                onClick = {
+                onClick = hapticClick({
                     errorRes = when {
                         scope == SafetyCheckScope.Zone && tower == null -> R.string.admin_err_pick_tower
                         message.isBlank() -> R.string.admin_err_message_required
                         else -> null
                     }
                     if (errorRes == null) confirmStart = true
-                },
+                }),
                 enabled = !busy,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = KavachTheme.colors.danger,

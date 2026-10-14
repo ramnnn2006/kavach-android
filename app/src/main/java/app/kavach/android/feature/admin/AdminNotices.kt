@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -178,7 +180,7 @@ fun AdminNoticesScreen(navigator: KavachNavigator) {
         onBack = navigator::back,
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { sheet = NoticeSheetState.New },
+                onClick = hapticClick({ sheet = NoticeSheetState.New }),
                 icon = { Icon(Icons.Rounded.Add, contentDescription = null) },
                 text = { Text(stringResource(R.string.admin_new_notice)) },
             )
@@ -203,7 +205,7 @@ fun AdminNoticesScreen(navigator: KavachNavigator) {
                     NoticeCard(
                         notice = notice,
                         busy = rowBusy == notice.id,
-                        onClick = { sheet = NoticeSheetState.Edit(notice) },
+                        onClick = hapticClick({ sheet = NoticeSheetState.Edit(notice) }),
                         onTogglePin = { vm.togglePin(notice) },
                         // pinning moves a notice to the top: let it slide there
                         modifier = if (reduceMotion) Modifier else Modifier.animateItem(),
@@ -234,7 +236,7 @@ private fun NoticeCard(
         if (notice.pinned) R.string.admin_unpin_notice_name else R.string.admin_pin_notice_name,
         notice.title,
     )
-    KavachCard(modifier = modifier, onClick = onClick, contentPadding = PaddingValues(start = Spacing.md, top = Spacing.sm, bottom = Spacing.sm, end = Spacing.xs)) {
+    KavachCard(modifier = modifier, onClick = hapticClick(onClick), contentPadding = PaddingValues(start = Spacing.md, top = Spacing.sm, bottom = Spacing.sm, end = Spacing.xs)) {
         Row(verticalAlignment = Alignment.Top) {
             Column(Modifier.weight(1f).padding(top = Spacing.xs), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(notice.title, style = MaterialTheme.typography.titleMedium)
@@ -254,7 +256,7 @@ private fun NoticeCard(
                     )
                 }
             }
-            IconButton(onClick = onTogglePin, enabled = !busy) {
+            IconButton(onClick = hapticClick(onTogglePin), enabled = !busy) {
                 Icon(
                     if (notice.pinned) Icons.Rounded.PushPin else Icons.Outlined.PushPin,
                     contentDescription = pinLabel,
@@ -336,14 +338,14 @@ private fun NoticeSheet(existing: Notice?, vm: AdminNoticesViewModel, onDismiss:
                 )
             }
             if (expiry != null) {
-                TextButton(onClick = { expiry = null }) { Text(stringResource(R.string.admin_clear_date)) }
+                TextButton(onClick = hapticClick({ expiry = null })) { Text(stringResource(R.string.admin_clear_date)) }
             }
         }
         serverError?.let {
             Text(stringResource(it), color = KavachTheme.colors.danger, style = MaterialTheme.typography.bodyMedium)
         }
         if (existing != null) {
-            TextButton(onClick = { confirmDelete = true }, enabled = !busy) {
+            TextButton(onClick = hapticClick({ confirmDelete = true }), enabled = !busy) {
                 Text(stringResource(R.string.common_delete), color = KavachTheme.colors.danger)
             }
         }
@@ -385,16 +387,16 @@ private fun ExpiryPickerDialog(initial: LocalDate?, onPick: (LocalDate) -> Unit,
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(
-                onClick = {
+                onClick = hapticClick({
                     state.selectedDateMillis?.let { ms ->
                         onPick(Instant.ofEpochMilli(ms).atZone(ZoneOffset.UTC).toLocalDate())
                     }
                     onDismiss()
-                },
+                }),
                 enabled = state.selectedDateMillis != null,
             ) { Text(stringResource(R.string.common_confirm)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
+        dismissButton = { TextButton(onClick = hapticClick(onDismiss)) { Text(stringResource(R.string.common_cancel)) } },
     ) {
         DatePicker(state = state)
     }

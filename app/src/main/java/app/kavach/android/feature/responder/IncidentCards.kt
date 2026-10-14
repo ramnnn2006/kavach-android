@@ -1,5 +1,7 @@
 package app.kavach.android.feature.responder
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -70,7 +72,7 @@ private fun IncidentCardFrame(
             showStatus = showStatus,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClickLabel = stringResource(R.string.responder_open_details), onClick = onOpen)
+                .clickable(onClickLabel = stringResource(R.string.responder_open_details), onClick = hapticClick(onOpen))
                 .padding(Spacing.md),
         )
         if (hasFooter) {
@@ -156,7 +158,7 @@ internal fun MyJobCard(
                 if (nextLabel != null) {
                     ActionButton(
                         text = stringResource(nextLabel),
-                        onClick = onNext,
+                        onClick = hapticClick(onNext),
                         modifier = Modifier.weight(1f),
                         busy = busy,
                         style = if (resolves) ActionStyle.Success else ActionStyle.Primary,
@@ -202,7 +204,7 @@ internal fun OpenAlertCard(
             }
             ActionButton(
                 text = stringResource(R.string.common_action_claim),
-                onClick = onClaim,
+                onClick = hapticClick(onClaim),
                 modifier = Modifier.fillMaxWidth().semantics { contentDescription = claimCd },
                 busy = busy,
                 enabled = blockedReason == null,

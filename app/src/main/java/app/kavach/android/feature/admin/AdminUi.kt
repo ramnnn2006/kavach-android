@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -177,7 +179,7 @@ internal fun AdminSheet(
                         Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = KavachTheme.colors.textMuted)
                     }
                 }
-                IconButton(onClick = onDismiss, enabled = !busy) {
+                IconButton(onClick = hapticClick(onDismiss), enabled = !busy) {
                     Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.common_close))
                 }
             }
@@ -210,8 +212,8 @@ internal fun RowScope.SheetButtons(
     busy: Boolean,
     enabled: Boolean = true,
 ) {
-    TextButton(onClick = onCancel, enabled = !busy) { Text(stringResource(R.string.common_cancel)) }
-    Button(onClick = onConfirm, enabled = enabled && !busy) {
+    TextButton(onClick = hapticClick(onCancel), enabled = !busy) { Text(stringResource(R.string.common_cancel)) }
+    Button(onClick = hapticClick(onConfirm), enabled = enabled && !busy) {
         if (busy) {
             CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = LocalContentColor.current)
             Spacer(Modifier.width(Spacing.sm))
@@ -257,10 +259,10 @@ internal fun <T> PickerField(
             options.forEach { option ->
                 DropdownMenuItem(
                     text = { Text(option.label) },
-                    onClick = {
+                    onClick = hapticClick({
                         open = false
                         onSelect(option.value)
-                    },
+                    }),
                 )
             }
         }
@@ -281,7 +283,7 @@ internal fun <T> MenuButton(
     var open by remember { mutableStateOf(false) }
     Box(modifier) {
         TextButton(
-            onClick = { open = true },
+            onClick = hapticClick({ open = true }),
             enabled = enabled,
             modifier = Modifier.semantics { this.contentDescription = contentDescription },
         ) {
@@ -292,10 +294,10 @@ internal fun <T> MenuButton(
             options.forEach { option ->
                 DropdownMenuItem(
                     text = { Text(option.label) },
-                    onClick = {
+                    onClick = hapticClick({
                         open = false
                         onSelect(option.value)
-                    },
+                    }),
                 )
             }
         }
@@ -315,7 +317,7 @@ internal fun <T> SegmentedPicker(
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 selected = option.value == selected,
-                onClick = { onSelect(option.value) },
+                onClick = hapticClick({ onSelect(option.value) }),
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 enabled = enabled,
                 icon = {},
@@ -398,12 +400,12 @@ internal fun SpecialtyPicker(
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
             FilterChip(
                 selected = presetActive(selected, Rules.PRESET_MAINTENANCE),
-                onClick = { onChange(orderedSpecialties(Rules.PRESET_MAINTENANCE)) },
+                onClick = hapticClick({ onChange(orderedSpecialties(Rules.PRESET_MAINTENANCE)) }),
                 label = { Text(stringResource(R.string.common_preset_maintenance)) },
             )
             FilterChip(
                 selected = presetActive(selected, Rules.PRESET_SECURITY),
-                onClick = { onChange(orderedSpecialties(Rules.PRESET_SECURITY)) },
+                onClick = hapticClick({ onChange(orderedSpecialties(Rules.PRESET_SECURITY)) }),
                 label = { Text(stringResource(R.string.common_preset_security)) },
             )
         }
@@ -477,7 +479,7 @@ internal fun specialtiesText(types: List<IncidentType>): String {
 internal fun CallIconButton(phone: String?, name: String?, modifier: Modifier = Modifier) {
     if (phone.isNullOrBlank()) return
     val context = LocalContext.current
-    IconButton(onClick = { context.dial(phone) }, modifier = modifier) {
+    IconButton(onClick = hapticClick({ context.dial(phone) }), modifier = modifier) {
         Icon(
             Icons.Rounded.Call,
             contentDescription = stringResource(R.string.common_call_number, name?.takeIf { it.isNotBlank() } ?: phone),
@@ -514,7 +516,7 @@ internal fun IncidentRow(
     val escalated = active && incident.isEscalated
     KavachCard(
         modifier = modifier.sharedBoundsFor(incidentSharedKey(incident.id)),
-        onClick = onClick,
+        onClick = hapticClick(onClick),
         accent = if (escalated) KavachTheme.colors.red else null,
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {

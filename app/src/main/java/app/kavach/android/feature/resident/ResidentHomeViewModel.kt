@@ -3,6 +3,8 @@ package app.kavach.android.feature.resident
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.kavach.android.R
+import app.kavach.android.core.data.model.Notice
+import app.kavach.android.core.data.repo.NoticeRepository
 import app.kavach.android.core.data.model.Incident
 import app.kavach.android.core.data.model.MedicalAlert
 import app.kavach.android.core.data.model.PowerSource
@@ -63,6 +65,7 @@ class ResidentHomeViewModel @Inject constructor(
     private val safety: SafetyCheckRepository,
     private val outbox: OutboxRepository,
     private val connectivity: ConnectivityObserver,
+    private val noticeRepo: NoticeRepository,
 ) : ViewModel() {
 
     val messages = MessageQueue()
@@ -82,6 +85,11 @@ class ResidentHomeViewModel @Inject constructor(
         .flatMapLatest { incidents.listenMyIncidents() }
         .keepLoadedData()
         .stateIn(viewModelScope, started, Loadable<List<Incident>>())
+
+    private val noticesTick = MutableStateFlow(0)
+    fun retryNotices() { noticesTick.value += 1 }
+    val notices = noticesTick.flatMapLatest { noticeRepo.listenNotices() }.keepLoadedData()
+        .stateIn(viewModelScope, started, Loadable<List<Notice>>())
 
     // ── Society, power ───────────────────────────────────────────────────────
     private val societyRow = societyRepo.listenSociety().keepLoadedData().map { it.data }

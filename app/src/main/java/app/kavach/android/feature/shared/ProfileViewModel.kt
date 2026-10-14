@@ -10,6 +10,10 @@ import app.kavach.android.core.data.model.Vulnerability
 import app.kavach.android.core.data.outbox.OutboxRepository
 import app.kavach.android.core.data.prefs.SettingsStore
 import app.kavach.android.core.data.remote.KavachException
+import app.kavach.android.core.data.repo.IncidentRepository
+import app.kavach.android.core.data.model.Incident
+import app.kavach.android.core.data.remote.Loadable
+import kotlinx.coroutines.flow.flowOf
 import app.kavach.android.core.data.repo.ProfilePatch
 import app.kavach.android.core.data.repo.ProfileRepository
 import app.kavach.android.core.data.session.SessionManager
@@ -77,9 +81,15 @@ object ProfileLogic {
 class ProfileViewModel @Inject constructor(
     private val session: SessionManager,
     private val profiles: ProfileRepository,
+    private val incidents: IncidentRepository,
     private val settings: SettingsStore,
     private val outbox: OutboxRepository,
 ) : ViewModel() {
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val myReports = session.profile.map { it?.id }.distinctUntilChanged().flatMapLatest { id ->
+        if (id == null) flowOf(Loadable<List<Incident>>()) else incidents.listenMyIncidents()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), Loadable<List<Incident>>())
 
     val messages = MessageQueue()
 

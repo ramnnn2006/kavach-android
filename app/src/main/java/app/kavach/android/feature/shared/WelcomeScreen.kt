@@ -1,5 +1,7 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import app.kavach.android.core.ui.components.toneText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -155,10 +157,10 @@ fun WelcomeScreen() {
                             )
                             ActionButton(
                                 text = stringResource(R.string.shared_welcome_save),
-                                onClick = {
+                                onClick = hapticClick({
                                     focusManager.clearFocus()
                                     submit(vm, zoneId, floor, floors.isNotEmpty(), flat) { showErrors = true }
-                                },
+                                }),
                                 busy = saving,
                             )
                         }
@@ -168,7 +170,7 @@ fun WelcomeScreen() {
         }
 
         TextButton(
-            onClick = { confirmLogOut = true },
+            onClick = hapticClick({ confirmLogOut = true }),
             modifier = Modifier.align(Alignment.CenterHorizontally),
         ) { Text(stringResource(R.string.shared_log_out)) }
     }

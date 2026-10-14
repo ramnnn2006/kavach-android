@@ -53,7 +53,7 @@ class TrackerViewModel @Inject constructor(
     fun retry() { tick.value += 1 }
 
     val incident: StateFlow<Loadable<Incident?>> = tick
-        .flatMapLatest { incidents.listen(incidentId) }
+        .flatMapLatest { incidents.listen(incidentId, ownOnly = true) }
         .stateIn(viewModelScope, started, Loadable<Incident?>())
 
     val events: StateFlow<Loadable<List<IncidentEvent>>> = tick

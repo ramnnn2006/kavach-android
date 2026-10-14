@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -169,10 +171,10 @@ fun AdminIncidentsScreen(navigator: KavachNavigator) {
                             ),
                             action = when {
                                 filters.hasFilters -> ({
-                                    OutlinedButton(onClick = vm::clearFilters) { Text(stringResource(R.string.admin_clear_filters)) }
+                                    OutlinedButton(onClick = hapticClick(vm::clearFilters)) { Text(stringResource(R.string.admin_clear_filters)) }
                                 })
                                 active -> ({
-                                    OutlinedButton(onClick = { vm.setStatus(StatusChoice.All) }) {
+                                    OutlinedButton(onClick = hapticClick({ vm.setStatus(StatusChoice.All) })) {
                                         Text(stringResource(R.string.admin_show_all))
                                     }
                                 })
@@ -186,7 +188,7 @@ fun AdminIncidentsScreen(navigator: KavachNavigator) {
                     IncidentRow(
                         incident = incident,
                         now = now,
-                        onClick = { navigator.navigate(Routes.IncidentDetail(incident.id)) },
+                        onClick = hapticClick({ navigator.navigate(Routes.IncidentDetail(incident.id)) }),
                         modifier = if (reduce) Modifier else Modifier.animateItem(),
                         action = if (incident.isActive) {
                             {
@@ -194,12 +196,12 @@ fun AdminIncidentsScreen(navigator: KavachNavigator) {
                                 val text = stringResource(if (assigned) R.string.admin_reassign else R.string.admin_assign)
                                 if (assigned) {
                                     OutlinedButton(
-                                        onClick = { assigningId = incident.id },
+                                        onClick = hapticClick({ assigningId = incident.id }),
                                         modifier = Modifier.semantics { contentDescription = assignLabel },
                                     ) { Text(text) }
                                 } else {
                                     Button(
-                                        onClick = { assigningId = incident.id },
+                                        onClick = hapticClick({ assigningId = incident.id }),
                                         modifier = Modifier.semantics { contentDescription = assignLabel },
                                     ) { Text(text) }
                                 }
@@ -251,7 +253,7 @@ private fun FilterBar(
             Rules.TYPE_ORDER.forEach { type ->
                 FilterChip(
                     selected = type in filters.types,
-                    onClick = { onToggleType(type) },
+                    onClick = hapticClick({ onToggleType(type) }),
                     label = { Text(stringResource(type.shortLabelRes())) },
                 )
             }
@@ -265,7 +267,7 @@ private fun FilterBar(
             onSelect = onZone,
         )
         if (filters.hasFilters) {
-            TextButton(onClick = onClear) { Text(stringResource(R.string.admin_clear_filters)) }
+            TextButton(onClick = hapticClick(onClear)) { Text(stringResource(R.string.admin_clear_filters)) }
         }
     }
 }

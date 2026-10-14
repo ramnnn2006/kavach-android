@@ -14,6 +14,9 @@ import kotlinx.serialization.Serializable
 sealed interface Route
 
 object Routes {
+    @Serializable data object Settings : Route
+    /** The role tab pager; detail screens are pushed above this single root. */
+    @Serializable data object TabPager : Route
     // ── Shared ──────────────────────────────────────────────────────────────
     @Serializable data object Profile : Route
     /** The first-run walkthrough again (Profile → How Kavach works). */

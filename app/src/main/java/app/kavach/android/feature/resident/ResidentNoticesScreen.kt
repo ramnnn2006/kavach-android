@@ -90,7 +90,7 @@ fun ResidentNoticesScreen(navigator: KavachNavigator) {
                 val (pinned, rest) = remember(data) { ResidentRules.splitNotices(data) }
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = Spacing.screen, vertical = Spacing.sm),
+                    contentPadding = PaddingValues(start = Spacing.screen, end = Spacing.screen, top = Spacing.sm, bottom = Spacing.sm + app.kavach.android.core.ui.components.LocalFloatingBarInset.current),
                     verticalArrangement = Arrangement.spacedBy(Spacing.sm),
                 ) {
                     if (pinned.isNotEmpty()) {

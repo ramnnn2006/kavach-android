@@ -1,5 +1,7 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateDpAsState
@@ -126,7 +128,7 @@ fun WalkthroughScreen(role: UserRole, onDone: () -> Unit) {
                 color = KavachTheme.colors.textMuted,
                 modifier = Modifier.weight(1f),
             )
-            if (!isLast) TextButton(onClick = onDone) { Text(stringResource(R.string.shared_intro_skip)) }
+            if (!isLast) TextButton(onClick = hapticClick(onDone)) { Text(stringResource(R.string.shared_intro_skip)) }
         }
 
         HorizontalPager(state = pager, modifier = Modifier.weight(1f).fillMaxWidth()) { index ->
@@ -136,7 +138,7 @@ fun WalkthroughScreen(role: UserRole, onDone: () -> Unit) {
         PageDots(current = current, count = pages.size, modifier = Modifier.align(Alignment.CenterHorizontally))
         Spacer(Modifier.height(Spacing.md))
         Button(
-            onClick = { if (isLast) onDone() else goTo(current + 1) },
+            onClick = hapticClick({ if (isLast) onDone() else goTo(current + 1) }),
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
         ) {
             Text(stringResource(if (isLast) R.string.shared_intro_done else R.string.shared_intro_next))

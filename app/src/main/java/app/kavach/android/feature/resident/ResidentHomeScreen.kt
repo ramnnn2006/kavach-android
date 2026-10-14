@@ -1,5 +1,7 @@
 package app.kavach.android.feature.resident
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -36,6 +38,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.kavach.android.R
 import app.kavach.android.core.config.AppConfig
+import app.kavach.android.core.data.model.*
+import app.kavach.android.core.data.remote.Loadable
+import app.kavach.android.core.data.outbox.OutboxSnapshot
+import java.time.Instant
 import app.kavach.android.core.data.model.IncidentType
 import app.kavach.android.core.data.model.PowerSource
 import app.kavach.android.core.nav.KavachNavigator
@@ -72,8 +78,29 @@ fun ResidentHomeScreen(navigator: KavachNavigator) {
     val medical by vm.medicalAlerts.collectAsStateWithLifecycle()
     val coming by vm.coming.collectAsStateWithLifecycle()
     val ackBusy by vm.ackBusy.collectAsStateWithLifecycle()
+    val notices by vm.notices.collectAsStateWithLifecycle()
     val now by rememberNow()
 
+    ResidentHomeContent(navigator, profile, reports, society, homeZone, outbox, sending, safetyCard,
+        medical, coming, ackBusy, now, notices, vm::retryReports, vm::retryNotices,
+        vm::respondToSafetyCheck, vm::changeSafetyAnswer, vm::keepSafetyAnswer,
+        vm::sendNow, vm::dismissFailed, vm::imComing, vm::retryMedical)
+}
+
+@Composable
+internal fun ResidentHomeContent(
+    navigator: KavachNavigator,
+    profile: Profile?, reports: Loadable<List<Incident>>, society: SocietyInfo,
+    homeZone: Zone?, outbox: OutboxSnapshot, sending: Boolean, safetyCard: SafetyCardState?,
+    medical: Loadable<List<MedicalAlert>>, coming: Set<String>, ackBusy: String?, now: Instant,
+    notices: Loadable<List<Notice>>,
+    retryReports: () -> Unit, retryNotices: () -> Unit,
+    respondToSafetyCheck: (SafetyResponseStatus, String?) -> Unit,
+    changeSafetyAnswer: () -> Unit, keepSafetyAnswer: () -> Unit,
+    sendNow: () -> Unit, dismissFailed: (String) -> Unit,
+    imComing: (String) -> Unit, retryMedical: () -> Unit,
+) {
+    val context = LocalContext.current
     val name = profile?.firstName.orEmpty()
     val title = if (name.isNotBlank()) stringResource(R.string.resident_hi_name, name) else stringResource(R.string.resident_hi)
     val subtitle = listOfNotNull(society.name, Format.homeLine(context, profile).ifBlank { null }).joinToString(" · ").ifBlank { null }
@@ -88,69 +115,13 @@ fun ResidentHomeScreen(navigator: KavachNavigator) {
         LazyColumn(
             // imePadding: the Safety Check note field stays above the keyboard
             modifier = Modifier.fillMaxSize().padding(padding).imePadding(),
-            contentPadding = PaddingValues(horizontal = Spacing.screen, vertical = Spacing.sm),
+            contentPadding = PaddingValues(start = Spacing.screen, end = Spacing.screen, top = Spacing.sm, bottom = Spacing.sm + app.kavach.android.core.ui.components.LocalFloatingBarInset.current),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
-            safetyCard?.let { card ->
-                item(key = "safety-check") {
-                    SafetyCheckCard(
-                        card = card,
-                        onRespond = vm::respondToSafetyCheck,
-                        onChange = vm::changeSafetyAnswer,
-                        onKeep = vm::keepSafetyAnswer,
-                        onTrack = openTracker,
-                    )
-                }
-            }
-
-            if (!outbox.isEmpty) {
-                item(key = "outbox") {
-                    OutboxNotice(
-                        snapshot = outbox,
-                        securityPhone = securityPhone,
-                        sending = sending,
-                        onSendNow = vm::sendNow,
-                        onDismiss = vm::dismissFailed,
-                    )
-                }
-            }
-
-            val reportsError = reports.error
-            if (reportsError != null && reports.data == null) {
-                item(key = "reports-error") { ErrorBanner(reportsError, vm::retryReports) }
-            }
-
-            if (active.isNotEmpty()) {
-                item(key = "active-title") { SectionHeader(stringResource(R.string.resident_active_title)) }
-                items(active, key = { it.id }, contentType = { "active" }) { incident ->
-                    ActiveReportRow(
-                        incident = incident,
-                        now = now,
-                        onClick = { openTracker(incident.id) },
-                        modifier = reorderModifier(),
-                    )
-                }
-            }
-
             item(key = "report") {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                    Button(
-                        onClick = { navigator.navigate(Routes.ReportType) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = KavachTheme.colors.danger,
-                            contentColor = KavachTheme.colors.onAccent,
-                        ),
-                        contentPadding = PaddingValues(Spacing.md),
-                        shape = MaterialTheme.shapes.large,
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 72.dp),
-                    ) {
-                        Icon(Icons.Rounded.Warning, contentDescription = null, modifier = Modifier.size(28.dp))
-                        Column(Modifier.weight(1f).padding(start = Spacing.md)) {
-                            Text(stringResource(R.string.resident_report_emergency), style = MaterialTheme.typography.titleMedium)
-                            Text(stringResource(R.string.resident_report_emergency_sub), style = MaterialTheme.typography.bodySmall)
-                        }
-                    }
-                    KavachCard(onClick = { navigator.navigate(Routes.ReportDetails(IncidentType.Lift.wire)) }) {
+                    EmergencyAction(onClick = { navigator.navigate(Routes.ReportType) })
+                    KavachCard(onClick = hapticClick({ navigator.navigate(Routes.ReportDetails(IncidentType.Lift.wire)) })) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             TypeIcon(IncidentType.Lift, size = 36.dp)
                             Column(Modifier.weight(1f)) {
@@ -162,6 +133,88 @@ fun ResidentHomeScreen(navigator: KavachNavigator) {
                                 )
                             }
                             Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null, tint = KavachTheme.colors.textTertiary)
+                        }
+                    }
+                }
+            }
+
+
+            safetyCard?.let { card ->
+                item(key = "safety-check") {
+                    SafetyCheckCard(
+                        card = card,
+                        onRespond = respondToSafetyCheck,
+                        onChange = changeSafetyAnswer,
+                        onKeep = keepSafetyAnswer,
+                        onTrack = openTracker,
+                    )
+                }
+            }
+
+            if (!outbox.isEmpty) {
+                item(key = "outbox") {
+                    OutboxNotice(
+                        snapshot = outbox,
+                        securityPhone = securityPhone,
+                        sending = sending,
+                        onSendNow = sendNow,
+                        onDismiss = dismissFailed,
+                    )
+                }
+            }
+
+            val reportsError = reports.error
+            if (reportsError != null && reports.data == null) {
+                item(key = "reports-error") { ErrorBanner(reportsError, retryReports) }
+            }
+
+            if (active.isNotEmpty()) {
+                item(key = "active-title") {
+                    SectionHeader(stringResource(R.string.resident_active_title), trailing = {
+                        TextButton(onClick = hapticClick({ navigator.openTab(Routes.MyReports) })) { Text(stringResource(R.string.resident_see_all)) }
+                    })
+                }
+                items(active.take(2), key = { it.id }, contentType = { "active" }) { incident ->
+                    ActiveReportRow(
+                        incident = incident,
+                        now = now,
+                        onClick = hapticClick({ openTracker(incident.id) }),
+                        modifier = reorderModifier(),
+                    )
+                }
+            }
+
+
+            if (active.isEmpty() && reports.data != null) {
+                item(key = "active-empty") {
+                    SectionHeader(stringResource(R.string.resident_active_title))
+                    KavachCard {
+                        Text(stringResource(R.string.resident_no_active_title), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.resident_no_active_text), style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+            }
+            if (reports.data == null && reports.error == null) {
+                item(key = "reports-loading") { androidx.compose.material3.LinearProgressIndicator(Modifier.fillMaxWidth()) }
+            }
+            item(key = "notices-preview") {
+                Column {
+                    SectionHeader(stringResource(R.string.resident_notices_title), trailing = {
+                        TextButton(onClick = hapticClick({ navigator.openTab(Routes.ResidentNotices) })) {
+                            Text(stringResource(R.string.resident_see_all))
+                        }
+                    })
+                    val visible = ResidentRules.visibleNotices(notices.data.orEmpty(), now).take(2)
+                    if (notices.error != null && notices.data == null) ErrorBanner(notices.error, retryNotices)
+                    else if (notices.data == null) Text(stringResource(R.string.home_notices_loading), style = MaterialTheme.typography.bodySmall)
+                    else if (visible.isEmpty()) KavachCard {
+                        Text(stringResource(R.string.resident_no_notices_title), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.resident_no_notices_text), style = MaterialTheme.typography.bodySmall)
+                    }
+                    else visible.forEach { notice ->
+                        KavachCard(onClick = { navigator.openTab(Routes.ResidentNotices) }) {
+                            Text(notice.title, style = MaterialTheme.typography.titleMedium)
+                            Text(notice.body, style = MaterialTheme.typography.bodySmall, maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                         }
                     }
                 }
@@ -203,8 +256,8 @@ fun ResidentHomeScreen(navigator: KavachNavigator) {
                         coming = coming,
                         busyId = ackBusy,
                         now = now,
-                        onAck = vm::imComing,
-                        onRetry = vm::retryMedical,
+                        onAck = imComing,
+                        onRetry = retryMedical,
                     )
                 }
             }
@@ -214,7 +267,7 @@ fun ResidentHomeScreen(navigator: KavachNavigator) {
                     SectionHeader(
                         stringResource(R.string.resident_recent_title),
                         trailing = {
-                            TextButton(onClick = { navigator.openTab(Routes.MyReports) }) {
+                            TextButton(onClick = hapticClick({ navigator.openTab(Routes.MyReports) })) {
                                 Text(stringResource(R.string.resident_see_all))
                             }
                         },
@@ -225,11 +278,32 @@ fun ResidentHomeScreen(navigator: KavachNavigator) {
                         incident = incident,
                         profile = profile,
                         now = now,
-                        onClick = { openTracker(incident.id) },
+                        onClick = hapticClick({ openTracker(incident.id) }),
                         modifier = reorderModifier(),
                     )
                 }
             }
         }
     }
+}
+
+@Composable
+internal fun EmergencyAction(onClick: () -> Unit) {
+                    Button(
+                        onClick = hapticClick(onClick),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = KavachTheme.colors.onAccent,
+                        ),
+                        contentPadding = PaddingValues(Spacing.md),
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 192.dp),
+                    ) {
+                        Icon(Icons.Rounded.Warning, contentDescription = null, modifier = Modifier.size(40.dp))
+                        Column(Modifier.weight(1f).padding(start = Spacing.md)) {
+                            Text("SOS", style = MaterialTheme.typography.displaySmall)
+                            Text(stringResource(R.string.resident_report_emergency), style = MaterialTheme.typography.titleMedium)
+                            Text(stringResource(R.string.resident_report_emergency_sub), style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
 }

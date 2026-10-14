@@ -1,5 +1,7 @@
 package app.kavach.android.feature.resident
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -141,7 +143,7 @@ fun TrackerScreen(navigator: KavachNavigator) {
                 modifier = modifier,
                 text = stringResource(R.string.resident_not_found_text),
                 action = {
-                    Button(onClick = { navigator.openTab(Routes.MyReports) }) {
+                    Button(onClick = hapticClick({ navigator.openTab(Routes.MyReports) })) {
                         Text(stringResource(R.string.resident_see_my_reports))
                     }
                 },
@@ -324,11 +326,11 @@ private fun TrackerContent(
                     )
                     Spacer(Modifier.size(Spacing.sm))
                     Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm), modifier = Modifier.fillMaxWidth()) {
-                        TextButton(onClick = vm::cancelEdit, enabled = !saving, modifier = Modifier.weight(1f)) {
+                        TextButton(onClick = hapticClick(vm::cancelEdit), enabled = !saving, modifier = Modifier.weight(1f)) {
                             Text(stringResource(R.string.common_cancel))
                         }
                         Button(
-                            onClick = { vm.saveDetails(incident) },
+                            onClick = hapticClick({ vm.saveDetails(incident) }),
                             enabled = !saving,
                             modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                         ) {
@@ -348,7 +350,7 @@ private fun TrackerContent(
                         KeyValueRow(stringResource(R.string.resident_kv_note), incident.description)
                     }
                     if (active && isMine) {
-                        TextButton(onClick = { vm.startEdit(incident) }) {
+                        TextButton(onClick = hapticClick({ vm.startEdit(incident) })) {
                             Text(stringResource(R.string.resident_add_details))
                         }
                     }
@@ -408,7 +410,7 @@ private fun TrackerContent(
 
         if (ResidentRules.canCancel(status, isMine)) {
             TextButton(
-                onClick = vm::openCancel,
+                onClick = hapticClick(vm::openCancel),
                 enabled = !cancelling,
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
             ) {
@@ -470,7 +472,7 @@ private fun CancelReportDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(reason.trim().ifEmpty { null }) }, enabled = !running) {
+            TextButton(onClick = hapticClick({ onConfirm(reason.trim().ifEmpty { null }) }), enabled = !running) {
                 if (running) {
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = KavachTheme.colors.danger)
                     Spacer(Modifier.size(Spacing.sm))
@@ -479,7 +481,7 @@ private fun CancelReportDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !running) { Text(stringResource(R.string.resident_keep_alert)) }
+            TextButton(onClick = hapticClick(onDismiss), enabled = !running) { Text(stringResource(R.string.resident_keep_alert)) }
         },
     )
 }

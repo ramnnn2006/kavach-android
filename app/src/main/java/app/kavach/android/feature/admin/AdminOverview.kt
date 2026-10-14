@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -188,7 +190,7 @@ fun AdminOverviewScreen(navigator: KavachNavigator) {
         title = stringResource(R.string.nav_overview),
         subtitle = societyName,
         actions = {
-            IconButton(onClick = { navigator.navigate(Routes.Profile) }) {
+            IconButton(onClick = hapticClick({ navigator.navigate(Routes.Profile) })) {
                 Icon(Icons.Rounded.Person, contentDescription = stringResource(R.string.nav_profile))
             }
         },
@@ -217,7 +219,7 @@ fun AdminOverviewScreen(navigator: KavachNavigator) {
                     SectionHeader(
                         stringResource(R.string.admin_needs_attention),
                         trailing = {
-                            TextButton(onClick = { navigator.openTab(Routes.AdminIncidents) }) {
+                            TextButton(onClick = hapticClick({ navigator.openTab(Routes.AdminIncidents) })) {
                                 Text(stringResource(R.string.admin_see_all))
                             }
                         },
@@ -243,19 +245,19 @@ fun AdminOverviewScreen(navigator: KavachNavigator) {
                     IncidentRow(
                         incident = incident,
                         now = now,
-                        onClick = { navigator.navigate(Routes.IncidentDetail(incident.id)) },
+                        onClick = hapticClick({ navigator.navigate(Routes.IncidentDetail(incident.id)) }),
                         modifier = if (reduce) Modifier else Modifier.animateItem(),
                         action = {
                             val assignedAlready = incident.assignedTo != null
                             val actionText = stringResource(if (assignedAlready) R.string.admin_reassign else R.string.admin_assign)
                             if (assignedAlready) {
                                 OutlinedButton(
-                                    onClick = { assigningId = incident.id },
+                                    onClick = hapticClick({ assigningId = incident.id }),
                                     modifier = Modifier.semantics { contentDescription = assignLabel },
                                 ) { Text(actionText) }
                             } else {
                                 Button(
-                                    onClick = { assigningId = incident.id },
+                                    onClick = hapticClick({ assigningId = incident.id }),
                                     modifier = Modifier.semantics { contentDescription = assignLabel },
                                 ) { Text(actionText) }
                             }
@@ -264,7 +266,7 @@ fun AdminOverviewScreen(navigator: KavachNavigator) {
                 }
                 if (stats.attention.size > ATTENTION_LIMIT) {
                     item(key = "more-attention") {
-                        TextButton(onClick = { navigator.openTab(Routes.AdminIncidents) }) {
+                        TextButton(onClick = hapticClick({ navigator.openTab(Routes.AdminIncidents) })) {
                             Text(stringResource(R.string.admin_more_need_attention, stats.attention.size - ATTENTION_LIMIT))
                         }
                     }
@@ -304,21 +306,21 @@ fun AdminOverviewScreen(navigator: KavachNavigator) {
                             title = stringResource(R.string.admin_post_notice),
                             leading = { IconTile(Icons.Rounded.Campaign, KavachTheme.colors.orange) },
                             trailing = { ChevronIcon() },
-                            onClick = { navigator.navigate(Routes.AdminNotices) },
+                            onClick = hapticClick({ navigator.navigate(Routes.AdminNotices) }),
                         )
                         HorizontalDivider()
                         ListRow(
                             title = stringResource(R.string.nav_board),
                             leading = { IconTile(Icons.Rounded.Tv, KavachTheme.colors.indigo) },
                             trailing = { ChevronIcon() },
-                            onClick = { navigator.navigate(Routes.CommandBoard) },
+                            onClick = hapticClick({ navigator.navigate(Routes.CommandBoard) }),
                         )
                         HorizontalDivider()
                         ListRow(
                             title = stringResource(R.string.nav_insights),
                             leading = { IconTile(Icons.Rounded.BarChart, KavachTheme.colors.blue) },
                             trailing = { ChevronIcon() },
-                            onClick = { navigator.navigate(Routes.AdminReports) },
+                            onClick = hapticClick({ navigator.navigate(Routes.AdminReports) }),
                         )
                     }
                 }
@@ -339,7 +341,7 @@ fun AdminOverviewScreen(navigator: KavachNavigator) {
 
 @Composable
 private fun CheckBanner(summary: SafetySummary?, onClick: () -> Unit) {
-    KavachCard(onClick = onClick, accent = KavachTheme.colors.red) {
+    KavachCard(onClick = hapticClick(onClick), accent = KavachTheme.colors.red) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
             PulsingDot(KavachTheme.colors.red)
             Column(Modifier.weight(1f)) {
@@ -429,7 +431,7 @@ private fun SocietyStatus(
                 counts.off > 0 -> stringResource(R.string.admin_zones_manual_off, counts.off)
                 else -> stringResource(R.string.admin_all_zones_on)
             },
-            onClick = onPower,
+            onClick = hapticClick(onPower),
         )
         HorizontalDivider()
         StatusRow(
@@ -443,7 +445,7 @@ private fun SocietyStatus(
             },
             valueTone = if (overdue > 0) colors.red else Color.Unspecified,
             detail = if (compliance.data == null) null else stringResource(R.string.admin_due_soon_count, dueSoon),
-            onClick = onCompliance,
+            onClick = hapticClick(onCompliance),
         )
         HorizontalDivider()
         StatusRow(
@@ -453,7 +455,7 @@ private fun SocietyStatus(
             value = if (check != null) stringResource(R.string.admin_check_running) else null,
             valueTone = colors.red,
             detail = if (check != null) rollCallLine(rollSummary) else stringResource(R.string.admin_no_check_running),
-            onClick = onSafety,
+            onClick = hapticClick(onSafety),
         )
         HorizontalDivider()
         StatusRow(
@@ -467,7 +469,7 @@ private fun SocietyStatus(
             },
             valueTone = if (team.data != null && onDuty.isEmpty()) colors.red else Color.Unspecified,
             detail = onDuty.joinToString(", ") { it.fullName }.ifEmpty { null },
-            onClick = onTeam,
+            onClick = hapticClick(onTeam),
         )
     }
 }
@@ -499,6 +501,6 @@ private fun StatusRow(
                 ChevronIcon()
             }
         },
-        onClick = onClick,
+        onClick = hapticClick(onClick),
     )
 }

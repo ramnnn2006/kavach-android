@@ -1,5 +1,7 @@
 package app.kavach.android.feature.responder
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -84,7 +86,7 @@ fun ResponderChecksScreen(navigator: KavachNavigator, viewModel: ResponderChecks
 private fun ChecksList(data: ChecksData, onMarkDone: (ComplianceItem) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = Spacing.screen, vertical = Spacing.sm),
+        contentPadding = PaddingValues(start = Spacing.screen, end = Spacing.screen, top = Spacing.sm, bottom = Spacing.sm + app.kavach.android.core.ui.components.LocalFloatingBarInset.current),
         verticalArrangement = Arrangement.spacedBy(Spacing.sm),
     ) {
         if (data.total == 0) {
@@ -151,7 +153,7 @@ private fun CheckRow(item: ComplianceItem, status: ComplianceStatus, onMarkDone:
             Text(dueLine(item), style = MaterialTheme.typography.bodyMedium, color = dueTone)
             Text(lastDone, style = MaterialTheme.typography.bodySmall, color = KavachTheme.colors.textMuted)
         }
-        TextButton(onClick = onMarkDone, modifier = Modifier.semantics { contentDescription = markDoneCd }) {
+        TextButton(onClick = hapticClick(onMarkDone), modifier = Modifier.semantics { contentDescription = markDoneCd }) {
             Text(stringResource(R.string.responder_mark_done))
         }
     }
