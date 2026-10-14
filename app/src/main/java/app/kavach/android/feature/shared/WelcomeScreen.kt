@@ -1,5 +1,6 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.toneText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -82,7 +83,7 @@ fun WelcomeScreen() {
             Text(
                 stringResource(R.string.shared_welcome_no_society),
                 style = MaterialTheme.typography.bodyMedium,
-                color = KavachTheme.colors.warning,
+                color = toneText(KavachTheme.colors.warning),
                 textAlign = TextAlign.Center,
             )
         } else {

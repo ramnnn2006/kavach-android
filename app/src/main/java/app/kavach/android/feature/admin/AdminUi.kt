@@ -233,6 +233,7 @@ internal fun <T> PickerField(
     onSelect: (T) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    errorText: String? = null,
 ) {
     var open by remember { mutableStateOf(false) }
     Box(modifier.fillMaxWidth()) {
@@ -240,6 +241,8 @@ internal fun <T> PickerField(
             value = selectedText,
             onValueChange = {},
             readOnly = true,
+            isError = errorText != null,
+            supportingText = errorText?.let { { Text(it) } },
             label = { Text(label) },
             trailingIcon = { Icon(Icons.Rounded.ArrowDropDown, contentDescription = null) },
             modifier = Modifier.fillMaxWidth().clearAndSetSemantics { },
@@ -248,7 +251,7 @@ internal fun <T> PickerField(
             Modifier
                 .matchParentSize()
                 .clickable(enabled = enabled, role = Role.DropdownList) { open = true }
-                .semantics { contentDescription = "$label: $selectedText" },
+                .semantics { contentDescription = "$label: $selectedText ${errorText.orEmpty()}" },
         )
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             options.forEach { option ->

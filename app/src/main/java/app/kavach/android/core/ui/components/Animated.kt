@@ -89,6 +89,7 @@ fun HoldToSendButton(
     height: Dp = 64.dp,
     /** Shown for a moment after an early release, so a quick tap doesn't look broken. */
     releasedEarlyLabel: String? = null,
+    accessibleActionLabel: String = label,
 ) {
     val progress = remember { Animatable(0f) }
     var hint by remember { mutableStateOf(false) }
@@ -110,7 +111,7 @@ fun HoldToSendButton(
                 role = Role.Button
                 if (holding) stateDescription = holdingLabel
                 if (!enabled) disabled()
-                onClick { if (enabled) { haptics.confirm(); currentOnComplete() }; enabled }
+                onClick(label = accessibleActionLabel) { if (enabled) { haptics.confirm(); currentOnComplete() }; enabled }
             }
             .pointerInput(enabled, holdMillis) {
                 if (!enabled) return@pointerInput

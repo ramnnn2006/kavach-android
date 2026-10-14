@@ -177,6 +177,7 @@ internal fun ActionButton(
     val content: @Composable RowScope.() -> Unit = {
         if (busy) {
             CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = LocalContentColor.current)
+            Text(text)
         } else {
             Text(text)
         }

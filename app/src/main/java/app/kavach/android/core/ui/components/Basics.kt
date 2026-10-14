@@ -192,7 +192,7 @@ fun IconTile(icon: ImageVector, tone: Color, modifier: Modifier = Modifier, size
 
 @Composable
 fun TypeIcon(type: IncidentType, modifier: Modifier = Modifier, size: Dp = 40.dp) {
-    IconTile(type.icon(), KavachTheme.colors.type(type), modifier, size, contentDescription = stringResource(type.labelRes()))
+    IconTile(type.icon(), KavachTheme.colors.type(type), modifier, size, contentDescription = null)
 }
 
 /**

@@ -235,4 +235,5 @@
         <item>Note what they look like and which way they went.</item>
         <item>If anyone is in danger, call 112.</item>
     </string-array>
+    <string name="resident_send_accessible">Send emergency report now</string>
 </resources>

@@ -1,5 +1,6 @@
 package app.kavach.android.feature.resident
 
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
@@ -408,12 +409,14 @@ private fun ReviewStep(
 
     Text(
         stringResource(R.string.resident_review_hold_hint),
+        modifier = Modifier.clearAndSetSemantics { },
         style = MaterialTheme.typography.bodyMedium,
         color = KavachTheme.colors.textMuted,
     )
     HoldToSendButton(
         label = stringResource(R.string.resident_hold_to_send),
         holdingLabel = stringResource(R.string.resident_holding),
+        accessibleActionLabel = stringResource(R.string.resident_send_accessible),
         releasedEarlyLabel = stringResource(R.string.resident_hold_released_early),
         onComplete = vm::send,
         enabled = !ui.sending,

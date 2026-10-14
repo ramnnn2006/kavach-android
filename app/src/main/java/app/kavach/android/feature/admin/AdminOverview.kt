@@ -46,6 +46,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import app.kavach.android.R
+import app.kavach.android.core.ui.components.toneText
 import app.kavach.android.core.data.model.ComplianceItem
 import app.kavach.android.core.data.model.ComplianceStatus
 import app.kavach.android.core.data.model.Incident
@@ -492,7 +493,7 @@ private fun StatusRow(
                         value,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
-                        color = valueTone,
+                        color = toneText(valueTone),
                     )
                 }
                 ChevronIcon()

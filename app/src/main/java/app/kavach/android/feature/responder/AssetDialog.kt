@@ -114,7 +114,8 @@ internal fun AssetDialog(
                 onClick = { onSave(state, note.trim(), context.getString(state.labelRes())) },
                 enabled = !busy,
             ) {
-                if (busy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) else Text(stringResource(R.string.common_save))
+                if (busy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                Text(stringResource(R.string.common_save))
             }
         },
         dismissButton = {

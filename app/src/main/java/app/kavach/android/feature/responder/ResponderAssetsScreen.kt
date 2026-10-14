@@ -1,5 +1,6 @@
 package app.kavach.android.feature.responder
 
+import app.kavach.android.core.ui.components.toneText
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -153,7 +154,7 @@ private fun AssetRow(asset: Asset, now: Instant, onClick: () -> Unit) {
                 Text(
                     expiryText(warning),
                     style = MaterialTheme.typography.bodySmall,
-                    color = if (warning.expired) KavachTheme.colors.red else KavachTheme.colors.orange,
+                    color = toneText(if (warning.expired) KavachTheme.colors.red else KavachTheme.colors.orange),
                 )
             }
             asset.notes?.takeIf { it.isNotBlank() }?.let {

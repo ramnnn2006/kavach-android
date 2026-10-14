@@ -1,5 +1,10 @@
 package app.kavach.android.feature.admin
 
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -359,20 +364,21 @@ private fun MemberFormSheet(
     vm: AdminMembersViewModel,
     onDismiss: () -> Unit,
 ) {
+    val errorView = remember { BringIntoViewRequester() }
     val busy by vm.busy.collectAsStateWithLifecycle()
     val serverError by vm.error.collectAsStateWithLifecycle()
     val haptics = rememberHaptics()
     LaunchedEffect(existing?.id) { vm.clearError() }
 
-    var name by remember { mutableStateOf(existing?.fullName.orEmpty()) }
-    var phone by remember { mutableStateOf(existing?.let { Phones.display(it.phone) }.orEmpty()) }
-    var role by remember { mutableStateOf(existing?.role ?: UserRole.Resident) }
-    var zoneId by remember { mutableStateOf(existing?.zoneId) }
+    var name by rememberSaveable { mutableStateOf(existing?.fullName.orEmpty()) }
+    var phone by rememberSaveable { mutableStateOf(existing?.let { Phones.display(it.phone) }.orEmpty()) }
+    var role by rememberSaveable { mutableStateOf(existing?.role ?: UserRole.Resident) }
+    var zoneId by rememberSaveable { mutableStateOf(existing?.zoneId) }
     // The list shows the flat label ("A-1204"); the RPCs take the number and add the tower letter
-    var flat by remember { mutableStateOf(flatDigits(existing?.flatNumber)) }
-    var specialties by remember { mutableStateOf<List<IncidentType>>(existing?.specialties.orEmpty()) }
-    var issue by remember { mutableStateOf<MemberFormIssue?>(null) }
-    var confirmRemove by remember { mutableStateOf(false) }
+    var flat by rememberSaveable { mutableStateOf(flatDigits(existing?.flatNumber)) }
+    var specialties by rememberSaveable { mutableStateOf<List<IncidentType>>(existing?.specialties.orEmpty()) }
+    var issue by rememberSaveable { mutableStateOf<MemberFormIssue?>(null) }
+    var confirmRemove by rememberSaveable { mutableStateOf(false) }
 
     // Flats belong to towers (member_resolve_flat accepts only kind = tower), like the website
     val towers = remember(zones) { zones.filter { it.kind == ZoneKind.Tower } }
@@ -382,14 +388,16 @@ private fun MemberFormSheet(
     val phoneError = if (issue == MemberFormIssue.PhoneInvalid) stringResource(R.string.common_err_phone_number) else null
     val flatError = when (issue) {
         MemberFormIssue.FlatRequired -> stringResource(R.string.common_err_member_flat)
-        MemberFormIssue.TowerRequired -> stringResource(R.string.admin_err_pick_tower)
         else -> null
     }
     // Field problems are shown on their field; this line is for the rest and for server errors
     val formErrorRes = when (issue) {
+        MemberFormIssue.NameRequired -> R.string.common_err_name_required
+        MemberFormIssue.PhoneInvalid -> R.string.common_err_phone_number
+        MemberFormIssue.FlatRequired -> R.string.common_err_member_flat
+        MemberFormIssue.TowerRequired -> R.string.admin_err_pick_tower
         MemberFormIssue.SpecialtyRequired -> R.string.admin_pick_specialty
         null -> serverError
-        else -> null
     }
 
     AdminSheet(
@@ -463,6 +471,7 @@ private fun MemberFormSheet(
             ErrorBanner(zonesError, onRetryZones)
         }
         PickerField(
+            errorText = if (issue == MemberFormIssue.TowerRequired) stringResource(R.string.admin_err_pick_tower) else null,
             label = stringResource(R.string.common_tower),
             selectedText = towers.firstOrNull { it.id == zoneId }?.name ?: noTower,
             options = towers.map { PickerOption<String?>(it.id, it.name) },
@@ -485,7 +494,9 @@ private fun MemberFormSheet(
             SpecialtyPicker(selected = specialties, onChange = { specialties = it; issue = null })
         }
         if (formErrorRes != null) {
-            Text(stringResource(formErrorRes), color = KavachTheme.colors.danger, style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(formErrorRes), color = KavachTheme.colors.danger, style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.bringIntoViewRequester(errorView).semantics { liveRegion = LiveRegionMode.Assertive })
+            LaunchedEffect(formErrorRes) { errorView.bringIntoView() }
         }
         if (existing != null) {
             TextButton(onClick = { confirmRemove = true }, enabled = !busy) {

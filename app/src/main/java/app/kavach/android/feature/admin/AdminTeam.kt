@@ -1,5 +1,10 @@
 package app.kavach.android.feature.admin
 
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import app.kavach.android.core.ui.components.toneText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -372,7 +377,7 @@ private fun ResidentRow(member: Member, onMakeStaff: () -> Unit) {
                     Text(
                         Format.vulnerabilityFull(context, member.vulnerability),
                         style = MaterialTheme.typography.bodySmall,
-                        color = KavachTheme.colors.warning,
+                        color = toneText(KavachTheme.colors.warning),
                     )
                 }
             }
@@ -385,11 +390,12 @@ private fun ResidentRow(member: Member, onMakeStaff: () -> Unit) {
 
 @Composable
 private fun MemberSheet(edit: MemberEdit, isSelf: Boolean, vm: AdminTeamViewModel, onDismiss: () -> Unit) {
+    val errorView = remember { BringIntoViewRequester() }
     val saving by vm.saving.collectAsStateWithLifecycle()
     val serverError by vm.error.collectAsStateWithLifecycle()
-    var role by remember { mutableStateOf(edit.initialRole ?: edit.role) }
-    var specialties by remember { mutableStateOf(edit.specialties) }
-    var localError by remember { mutableStateOf<Int?>(null) }
+    var role by rememberSaveable { mutableStateOf(edit.initialRole ?: edit.role) }
+    var specialties by rememberSaveable { mutableStateOf(edit.specialties) }
+    var localError by rememberSaveable { mutableStateOf<Int?>(null) }
     val haptics = rememberHaptics()
     LaunchedEffect(edit.id) { vm.clearError() }
 
@@ -407,7 +413,7 @@ private fun MemberSheet(edit: MemberEdit, isSelf: Boolean, vm: AdminTeamViewMode
                 onConfirm = {
                     if (role == UserRole.Responder && specialties.isEmpty()) {
                         localError = R.string.admin_pick_specialty
-                    } else if (edit.role == UserRole.Responder && role == UserRole.Resident && edit.activeLoad > 0) {
+                    } else if (role == UserRole.Resident && edit.activeLoad > 0) {
                         // Their open incidents would stay assigned to a non-responder
                         localError = R.string.admin_demote_has_load
                     } else {
@@ -447,7 +453,7 @@ private fun MemberSheet(edit: MemberEdit, isSelf: Boolean, vm: AdminTeamViewMode
             Text(
                 stringResource(R.string.admin_self_demote_hint),
                 style = MaterialTheme.typography.bodyMedium,
-                color = KavachTheme.colors.warning,
+                color = toneText(KavachTheme.colors.warning),
             )
         }
         if (role != UserRole.Resident) {
@@ -461,7 +467,9 @@ private fun MemberSheet(edit: MemberEdit, isSelf: Boolean, vm: AdminTeamViewMode
         }
         val errorRes = localError ?: serverError
         if (errorRes != null) {
-            Text(stringResource(errorRes), color = KavachTheme.colors.danger, style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(errorRes), color = KavachTheme.colors.danger, style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.bringIntoViewRequester(errorView).semantics { liveRegion = LiveRegionMode.Assertive })
+            LaunchedEffect(errorRes) { errorView.bringIntoView() }
         }
     }
 }

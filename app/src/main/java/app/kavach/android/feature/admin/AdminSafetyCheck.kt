@@ -1,5 +1,6 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.toneText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -322,7 +323,7 @@ fun AdminSafetyCheckScreen(navigator: KavachNavigator) {
                                     Text(
                                         Format.vulnerabilityFull(LocalContext.current, m.vulnerability),
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = KavachTheme.colors.warning,
+                                        color = toneText(KavachTheme.colors.warning),
                                     )
                                 }
                             }

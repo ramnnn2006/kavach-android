@@ -70,7 +70,8 @@ internal fun NoteDialog(
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(note.trim()) }, enabled = !busy) {
-                if (busy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) else Text(confirmLabel)
+                if (busy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                Text(confirmLabel)
             }
         },
         dismissButton = {

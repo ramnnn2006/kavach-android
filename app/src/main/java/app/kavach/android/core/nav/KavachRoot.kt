@@ -212,8 +212,8 @@ private fun RoleBottomBar(tabs: List<Tab>, backStack: State<NavBackStackEntry?>,
                     Text(
                         stringResource(tab.label),
                         style = MaterialTheme.typography.labelSmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2,
+                        overflow = TextOverflow.Clip,
                     )
                 },
             )
