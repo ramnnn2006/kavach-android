@@ -1,5 +1,6 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.toneText
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -51,6 +52,7 @@ import app.kavach.android.core.ui.theme.Spacing
 fun SetupScreen(onDone: () -> Unit) {
     val context = LocalContext.current
     var notificationsOn by remember { mutableStateOf(context.notificationsAllowed()) }
+    var fullScreenOn by remember { mutableStateOf(context.fullScreenAlertsAllowed()) }
     var batteryOk by remember { mutableStateOf(context.isIgnoringBatteryOptimizations()) }
     // Android stops showing the permission dialog after the second refusal: then send people to settings
     var permissionBlocked by rememberSaveable { mutableStateOf(false) }
@@ -59,6 +61,7 @@ fun SetupScreen(onDone: () -> Unit) {
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         notificationsOn = context.notificationsAllowed()
         batteryOk = context.isIgnoringBatteryOptimizations()
+        fullScreenOn = context.fullScreenAlertsAllowed()
     }
 
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -71,7 +74,7 @@ fun SetupScreen(onDone: () -> Unit) {
     val canShowPermissionDialog = needsPermission && !permissionBlocked
     // Off without a dialog to show: only the settings screen can turn them on
     val notificationsBlocked = !notificationsOn && !canShowPermissionDialog
-    val allDone = notificationsOn && batteryOk
+    val allDone = notificationsOn && batteryOk && fullScreenOn
 
     AuthFrame {
         AppMark()
@@ -120,6 +123,12 @@ fun SetupScreen(onDone: () -> Unit) {
             onAction = { context.requestIgnoreBatteryOptimizations() },
         )
 
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            SetupStep(Icons.Rounded.Notifications, KavachTheme.colors.primary,
+                stringResource(R.string.shared_full_screen_title), stringResource(R.string.shared_full_screen_text),
+                fullScreenOn, stringResource(R.string.shared_full_screen_on), stringResource(R.string.shared_open_settings),
+                { context.openFullScreenAlertSettings() })
+        }
         Text(
             stringResource(R.string.shared_setup_honest),
             style = MaterialTheme.typography.bodySmall,
@@ -171,7 +180,7 @@ private fun SetupStep(
                     tint = KavachTheme.colors.success,
                     modifier = Modifier.size(20.dp),
                 )
-                Text(doneText, style = MaterialTheme.typography.bodyMedium, color = KavachTheme.colors.success)
+                Text(doneText, style = MaterialTheme.typography.bodyMedium, color = toneText(KavachTheme.colors.success))
             }
         } else {
             FilledTonalButton(onClick = onAction, modifier = Modifier.fillMaxWidth()) { Text(actionLabel) }

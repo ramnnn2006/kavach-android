@@ -62,6 +62,7 @@ fun LoginScreen() {
     val vm: LoginViewModel = hiltViewModel()
     val state by vm.state.collectAsStateWithLifecycle()
     val haptics = rememberHaptics()
+    val unsentCount by vm.unsentCount.collectAsStateWithLifecycle()
     MessageEffect(vm.messages.flow)
 
     // Wrong code, number not on the list, offline...
@@ -91,6 +92,11 @@ fun LoginScreen() {
             )
         }
 
+        if (unsentCount > 0) {
+            Text(stringResource(R.string.shared_login_unsent, unsentCount),
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Assertive })
+        }
         // Each step shows the error right under its fields, where it stays visible above the keyboard
         when (state.mode) {
             LoginMode.Phone -> when (state.step) {

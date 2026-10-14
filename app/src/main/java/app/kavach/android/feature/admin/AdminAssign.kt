@@ -83,13 +83,13 @@ class AssignViewModel @Inject constructor(
 
     fun clearError() { _failure.value = null }
 
-    fun assign(incidentId: String, responder: TeamMember, onDone: () -> Unit) {
+    fun assign(incidentId: String, expectedAssignee: String?, responder: TeamMember, onDone: () -> Unit) {
         if (_busyId.value != null) return
         _busyId.value = responder.id
         _failure.value = null
         viewModelScope.launch {
             try {
-                incidentRepo.assign(incidentId, responder.id)
+                incidentRepo.assign(incidentId, responder.id, expectedAssignee)
                 messages.send(R.string.admin_assigned_to, responder.fullName)
                 onDone()
             } catch (e: KavachException) {
@@ -154,7 +154,7 @@ internal fun AssignSheet(
                         busy = busyId == member.id,
                         enabled = busyId == null && incident.assignedTo != member.id,
                         onClick = {
-                            vm.assign(incident.id, member) {
+                            vm.assign(incident.id, incident.assignedTo, member) {
                                 haptics.confirm()
                                 onDismiss()
                             }

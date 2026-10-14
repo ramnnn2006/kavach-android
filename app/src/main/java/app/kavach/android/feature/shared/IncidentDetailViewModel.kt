@@ -240,7 +240,7 @@ class IncidentDetailViewModel @Inject constructor(
             R.string.shared_detail_assigned_toast,
             successArgs = listOf(responder.fullName),
             onSuccess = onDone,
-        ) { incidents.assign(incidentId, responder.id) }
+        ) { incidents.assign(incidentId, responder.id, (ui.value as? DetailUi.Ready)?.incident?.assignedTo) }
 
     /** Loads the responders for the assign dialog. */
     fun loadTeam() {

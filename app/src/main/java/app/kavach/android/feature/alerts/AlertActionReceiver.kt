@@ -54,6 +54,7 @@ class AlertActionReceiver : BroadcastReceiver() {
         val notifier = entry.notifier()
         val target = if (action == ACTION_COMING) LinkTarget.MedicalAlert else LinkTarget.Incident
         val link = DeepLink(target, incidentId)
+        val original = notifier.originalAlert(tag)
         notifier.showResult(
             tag,
             link,
@@ -93,21 +94,21 @@ class AlertActionReceiver : BroadcastReceiver() {
                 // The request may still have reached the server. Look before reporting a failure,
                 // outside the broadcast's short time limit.
                 notifier.showResult(tag, link, context.getString(R.string.alerts_claim_working), "", timeout = null)
-                entry.appScope().launch { verifyClaim(context, entry, notifier, tag, link, incidentId) }
+                entry.appScope().launch { verifyClaim(context, entry, notifier, tag, link, incidentId, original) }
             } else {
-                fail(context, notifier, action, tag, link, KavachException(ErrorCode.Timeout))
+                fail(context, notifier, action, tag, link, KavachException(ErrorCode.Timeout), original)
             }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             Log.w("KavachAlerts", "Notification action failed", e)
-            fail(context, notifier, action, tag, link, e.toKavach(entry.db().isOnline))
+            fail(context, notifier, action, tag, link, e.toKavach(entry.db().isOnline), original)
         }
     }
 
     /** After a timed-out claim: if the incident is now mine, the claim went through. */
     private suspend fun verifyClaim(
-        context: Context, entry: AlertsEntryPoint, notifier: AlertNotifier, tag: String, link: DeepLink, incidentId: String,
+        context: Context, entry: AlertsEntryPoint, notifier: AlertNotifier, tag: String, link: DeepLink, incidentId: String, original: android.app.Notification?,
     ) {
         val mine = try {
             withTimeout(20_000L) {
@@ -129,14 +130,18 @@ class AlertActionReceiver : BroadcastReceiver() {
                 timeout = null,
             )
         } else {
-            fail(context, notifier, ACTION_CLAIM, tag, link, KavachException(ErrorCode.Timeout))
+            fail(context, notifier, ACTION_CLAIM, tag, link, KavachException(ErrorCode.Timeout), original)
         }
     }
 
-    private fun fail(context: Context, notifier: AlertNotifier, action: String, tag: String, link: DeepLink, error: KavachException) {
+    private fun fail(context: Context, notifier: AlertNotifier, action: String, tag: String, link: DeepLink, error: KavachException, original: android.app.Notification?) {
         val taken = action == ACTION_CLAIM && error.code == ErrorCode.AlreadyClaimed
         val title = context.getString(if (taken) R.string.alerts_claim_taken_title else R.string.alerts_action_failed_title)
-        notifier.showResult(tag, link, title, context.getString(error.messageRes()), timeout = Duration.ofMinutes(5))
+        if (taken || error.code == ErrorCode.NotFound || error.detail == "Incident is already closed") {
+            notifier.showResult(tag, link, title, context.getString(error.messageRes()), timeout = Duration.ofMinutes(5))
+        } else {
+            notifier.restoreActionAlert(tag, original, link, title, context.getString(error.messageRes()), action)
+        }
     }
 
     companion object {

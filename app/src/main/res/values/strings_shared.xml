@@ -245,4 +245,8 @@
     <string name="shared_intro_adm_crisis_title">In a crisis</string>
     <string name="shared_intro_adm_crisis_text">Start a Safety Check to ask a tower or the whole society \"Are you safe?\", and open the Command board on the security cabin\'s screen.</string>
     <string name="shared_welcome_err_floor">Choose your floor</string>
+    <string name="shared_login_unsent">%1$d unsent emergency reports on this phone. Sign in to the same account to send them, or call for help now.</string>
+    <string name="shared_full_screen_title">Full-screen emergency alerts</string>
+    <string name="shared_full_screen_text">Allow Kavach to show emergency alerts over the lock screen. Without this, alerts appear as notifications only.</string>
+    <string name="shared_full_screen_on">Full-screen alerts allowed</string>
 </resources>

@@ -123,6 +123,7 @@ class OutboxRepository @Inject constructor(
         return try {
             val incident = withTimeoutOrNull(AppConfig.SEND_TIMEOUT_MS) { request.await() }
             if (incident != null) {
+                markSent(clientId, incident)
                 SubmitResult.Sent(incident)
             } else {
                 // Queue first, then watch the slow request: markSent() always runs after the row exists
@@ -183,7 +184,7 @@ class OutboxRepository @Inject constructor(
      */
     suspend fun flush(): FlushResult = flushLock.withLock {
         db.awaitSession()
-        val uid = db.knownUserId() ?: return FlushResult()
+        val uid = db.knownUserId() ?: return FlushResult(kept = dao.all().count { it.state != STATE_FAILED })
         val pending = dao.all().filter { it.state != STATE_FAILED && (it.userId == uid || it.userId == null) }
         if (pending.isEmpty()) return FlushResult()
         if (!connectivity.isOnline.value || !db.awaitUsableSession(SESSION_WAIT_MS)) return FlushResult(kept = pending.size)

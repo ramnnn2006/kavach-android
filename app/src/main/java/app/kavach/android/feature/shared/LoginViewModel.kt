@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -85,9 +87,12 @@ class LoginViewModel @Inject constructor(
     private val auth: AuthRepository,
     session: SessionManager,
     private val saved: SavedStateHandle,
+    private val outbox: app.kavach.android.core.data.outbox.OutboxRepository,
 ) : ViewModel() {
 
     val messages = MessageQueue()
+    val unsentCount = outbox.observe(null).map { it.pending.size }
+        .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), 0)
 
     private val _state = MutableStateFlow(restore())
     val state: StateFlow<LoginUiState> = _state.asStateFlow()

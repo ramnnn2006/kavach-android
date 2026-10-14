@@ -187,6 +187,11 @@ fun ProfileScreen(navigator: KavachNavigator) {
                     modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.xs, vertical = Spacing.xs),
                 )
             }
+            if (android.os.Build.VERSION.SDK_INT >= 34) {
+                TextButton(onClick = { context.openFullScreenAlertSettings() }) {
+                    Text(stringResource(R.string.shared_full_screen_title))
+                }
+            }
             Footnote(stringResource(R.string.shared_profile_alerts_footnote))
 
             SectionHeader(stringResource(R.string.shared_profile_section_account))

@@ -35,7 +35,7 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class TrackerViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     session: SessionManager,
     private val incidents: IncidentRepository,
 ) : ViewModel() {
@@ -88,7 +88,7 @@ class TrackerViewModel @Inject constructor(
     // ── Cancel ───────────────────────────────────────────────────────────────
     private val _cancelling = MutableStateFlow(false)
     val cancelling: StateFlow<Boolean> = _cancelling.asStateFlow()
-    private val _cancelOpen = MutableStateFlow(false)
+    private val _cancelOpen = MutableStateFlow(savedStateHandle["cancel_open"] ?: false)
     /** The "Cancel this alert?" dialog is open (kept open on failure, closed on success). */
     val cancelOpen: StateFlow<Boolean> = _cancelOpen.asStateFlow()
     private val _cancelError = MutableStateFlow<Throwable?>(null)
@@ -126,11 +126,19 @@ class TrackerViewModel @Inject constructor(
     }
 
     // ── Add details ──────────────────────────────────────────────────────────
-    private val _draft = MutableStateFlow<ResidentRules.DetailsDraft?>(null)
+    private val _draft = MutableStateFlow(savedStateHandle.get<Int>("draft_people")?.let { ResidentRules.DetailsDraft(it, savedStateHandle["draft_note"] ?: "") })
     /** Non-null while the resident is editing people / note. */
     val draft: StateFlow<ResidentRules.DetailsDraft?> = _draft.asStateFlow()
     private val _saving = MutableStateFlow(false)
     val saving: StateFlow<Boolean> = _saving.asStateFlow()
+
+    init {
+        viewModelScope.launch { _cancelOpen.collect { savedStateHandle["cancel_open"] = it } }
+        viewModelScope.launch { _draft.collect {
+            savedStateHandle["draft_people"] = it?.people
+            savedStateHandle["draft_note"] = it?.note
+        } }
+    }
 
     fun startEdit(incident: Incident) { _draft.value = ResidentRules.draftFor(incident) }
     fun cancelEdit() { if (!_saving.value) _draft.value = null }
@@ -155,7 +163,7 @@ class TrackerViewModel @Inject constructor(
                 incidents.updateDetails(
                     id = incident.id,
                     description = change.description,
-                    peopleAffected = change.peopleAffected,
+                    peopleAffected = change.peopleAffected ?: incident.peopleAffected,
                 )
                 _draft.value = null
                 messages.send(R.string.resident_details_saved)

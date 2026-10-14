@@ -58,6 +58,7 @@ fun Throwable.toKavach(online: Boolean = true): KavachException {
         return when {
             code == "42501" || "row-level security" in text || "permission denied" in text ->
                 KavachException(ErrorCode.Forbidden, msg, this)
+            code == "PGRST301" || code == "PGRST303" -> KavachException(ErrorCode.Offline, "Sign in again to send", this)
             code == "PGRST116" -> KavachException(ErrorCode.NotFound, msg, this)
             code == "23505" -> KavachException(ErrorCode.Duplicate, msg, this)
             code == "23514" || code == "22P02" || code == "23502" -> KavachException(ErrorCode.Invalid, msg, this)

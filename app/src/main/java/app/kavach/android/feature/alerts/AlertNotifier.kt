@@ -196,6 +196,27 @@ class AlertNotifier @Inject constructor(
         post(tag, b.build())
     }
 
+    /** Called before replacing an alert with the temporary working state. */
+    fun originalAlert(tag: String): Notification? =
+        ContextCompat.getSystemService(context, NotificationManager::class.java)
+            ?.activeNotifications?.firstOrNull { it.tag == tag && it.id == NOTIFICATION_ID }?.notification
+
+    fun restoreActionAlert(tag: String, original: Notification?, link: DeepLink, title: String, error: String, action: String) {
+        if (!canNotify()) return
+        val b = if (original != null) NotificationCompat.Builder(context, original) else
+            NotificationCompat.Builder(context, AlertChannelId.Emergency.id)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentIntent(DeepLinks.pendingIntent(context, tag.hashCode(), link))
+                .addAction(secureAction(context.getString(if (action == AlertActionReceiver.ACTION_CLAIM)
+                    R.string.common_action_claim else R.string.alerts_action_coming),
+                    actionIntent(action, link.incidentId.orEmpty(), tag)))
+        b.setContentText(error).setStyle(NotificationCompat.BigTextStyle().bigText(error))
+            .setTimeoutAfter(0).setOnlyAlertOnce(true).setSilent(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+        post(tag, b.build())
+    }
+
     fun cancelTag(tag: String) {
         manager.cancel(tag, NOTIFICATION_ID)
     }
@@ -326,7 +347,11 @@ class AlertNotifier @Inject constructor(
         val b = plainBuilder(e, context.getString(R.string.alerts_safety_title), body, DeepLink(LinkTarget.SafetyCheck))
             .setCategory(NotificationCompat.CATEGORY_EVENT)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .setPublicVersion(NotificationCompat.Builder(context, AlertChannelId.SafetyCheck.id)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(context.getString(R.string.alerts_safety_title))
+                .setContentText(context.getString(R.string.alerts_locked_body)).build())
         return b.build()
     }
 

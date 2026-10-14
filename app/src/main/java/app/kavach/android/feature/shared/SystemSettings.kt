@@ -79,3 +79,13 @@ internal fun Context.requestIgnoreBatteryOptimizations() {
         if (!startSettings(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))) openAppDetailsSettings()
     }
 }
+
+/** Android 14 requires a separate user grant for full-screen emergency alerts. */
+internal fun Context.fullScreenAlertsAllowed(): Boolean =
+    Build.VERSION.SDK_INT < 34 || (getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager).canUseFullScreenIntent()
+
+internal fun Context.openFullScreenAlertSettings() {
+    if (Build.VERSION.SDK_INT >= 34 && !startSettings(Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, Uri.parse("package:$packageName")))) {
+        openAppDetailsSettings()
+    }
+}

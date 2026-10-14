@@ -34,7 +34,7 @@ android {
     }
 
     // Optional release key (git-ignored kavach.properties): release.storeFile, release.storePassword,
-    // release.keyAlias, release.keyPassword. Without it the release build signs with the debug key.
+    // release.keyAlias, release.keyPassword. Release tasks require it.
     val releaseKeyFile = kavachProp("release.storeFile")
     signingConfigs {
         if (releaseKeyFile.isNotBlank()) {
@@ -57,8 +57,8 @@ android {
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             isDebuggable = false
-            // Not on the Play Store: sign with the debug key until a release key is configured.
-            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
+            // Never ship a release signed by the public debug key.
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 
@@ -127,4 +127,14 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+}
+
+// Keep debug/test configuration usable without a release secret.
+gradle.taskGraph.whenReady {
+    if (allTasks.any { it.name.contains("Release", ignoreCase = true) && !it.name.startsWith("test") }) {
+        require(kavachProp("release.storeFile").isNotBlank() &&
+            listOf("release.storePassword", "release.keyAlias", "release.keyPassword").all { kavachProp(it).isNotBlank() }) {
+            "Release signing is not configured. Set release.storeFile, release.storePassword, release.keyAlias and release.keyPassword in kavach.properties."
+        }
+    }
 }

@@ -197,10 +197,12 @@ class IncidentRepository @Inject constructor(
             put("p_reason", reason?.takeIf { it.isNotBlank() })
         })
 
-    suspend fun assign(id: String, responderId: String): Incident =
+    suspend fun assign(id: String, responderId: String, expectedAssignee: String?): Incident =
         db.rpcAs("assign_incident", buildJsonObject {
             put("p_incident_id", id)
             put("p_responder_id", responderId)
+            put("p_expected_assignee", expectedAssignee)
+            put("p_check_expected", true)
         })
 
     /** Reporter / admin while active; null fields are left unchanged. */

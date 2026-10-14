@@ -26,10 +26,10 @@ class NoticeRepository @Inject constructor(
     private val live: LiveQueries,
 ) {
     /** Unexpired notices, pinned first, newest first. */
-    suspend fun notices(): List<Notice> = db.call {
+    suspend fun notices(includeExpired: Boolean = false): List<Notice> = db.call {
         val now = Instant.now().toString()
         from("notices").select(Columns.raw(NOTICE_COLUMNS)) {
-            filter {
+            if (!includeExpired) filter {
                 or {
                     exact("expires_at", null)
                     gt("expires_at", now)
@@ -40,7 +40,7 @@ class NoticeRepository @Inject constructor(
         }.decodeList<Notice>()
     }
 
-    fun listenNotices(): Flow<Loadable<List<Notice>>> = live.live("notices", table("notices")) { notices() }
+    fun listenNotices(includeExpired: Boolean = false): Flow<Loadable<List<Notice>>> = live.live("notices:$includeExpired", table("notices")) { notices(includeExpired) }
 
     /** Admin. Author name and society come from my profile. */
     suspend fun post(title: String, body: String, pinned: Boolean = false, expiresAt: Instant? = null): String {

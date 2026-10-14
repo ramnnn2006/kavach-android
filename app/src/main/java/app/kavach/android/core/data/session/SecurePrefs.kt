@@ -15,6 +15,7 @@ object SecurePrefs {
 
     fun open(context: Context, name: String): SharedPreferences {
         val app = context.applicationContext
+        runCatching { app.deleteSharedPreferences("${name}_plain") }
         return try {
             create(app, name)
         } catch (e: Exception) {
@@ -26,7 +27,7 @@ object SecurePrefs {
             } catch (e2: Exception) {
                 // No usable Keystore: the app must still work, e.g. to queue an SOS
                 Log.w(TAG, "Secure storage unavailable: ${e2.javaClass.simpleName}")
-                app.getSharedPreferences("${name}_plain", Context.MODE_PRIVATE)
+                MemoryPreferences()
             }
         }
     }

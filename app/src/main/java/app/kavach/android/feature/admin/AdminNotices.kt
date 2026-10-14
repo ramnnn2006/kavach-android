@@ -83,7 +83,7 @@ class AdminNoticesViewModel @Inject constructor(
     fun retry() { retryTick.value = retryTick.value + 1 }
 
     val notices: StateFlow<Loadable<List<Notice>>> =
-        retryTick.flatMapLatest { repo.listenNotices() }.inState(viewModelScope)
+        retryTick.flatMapLatest { repo.listenNotices(includeExpired = true) }.inState(viewModelScope)
 
     private val _busy = MutableStateFlow(false)
     val busy: StateFlow<Boolean> = _busy
