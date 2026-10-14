@@ -1,5 +1,7 @@
 package app.kavach.android.feature.responder
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -184,9 +186,9 @@ internal fun ActionButton(
     }
     val active = enabled && !busy
     when (style) {
-        ActionStyle.Primary -> Button(onClick = onClick, modifier = modifier, enabled = active, content = content)
+        ActionStyle.Primary -> Button(onClick = hapticClick(onClick), modifier = modifier, enabled = active, content = content)
         ActionStyle.Success -> Button(
-            onClick = onClick,
+            onClick = hapticClick(onClick),
             modifier = modifier,
             enabled = active,
             colors = ButtonDefaults.buttonColors(
@@ -195,7 +197,7 @@ internal fun ActionButton(
             ),
             content = content,
         )
-        ActionStyle.Tonal -> FilledTonalButton(onClick = onClick, modifier = modifier, enabled = active, content = content)
+        ActionStyle.Tonal -> FilledTonalButton(onClick = hapticClick(onClick), modifier = modifier, enabled = active, content = content)
     }
 }
 

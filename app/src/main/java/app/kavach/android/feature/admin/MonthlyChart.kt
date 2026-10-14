@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import android.content.Context
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -102,7 +104,7 @@ internal fun MonthlyChart(bars: List<MonthBar>, modifier: Modifier = Modifier) {
             }
         }
 
-        TextButton(onClick = { showTable = !showTable }) {
+        TextButton(onClick = hapticClick({ showTable = !showTable })) {
             Text(stringResource(if (showTable) R.string.admin_hide_table else R.string.admin_show_as_table))
         }
         if (showTable) {

@@ -1,5 +1,7 @@
 package app.kavach.android.feature.resident
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -86,12 +88,12 @@ fun MyReportsScreen(navigator: KavachNavigator) {
             ) {
                 FilterChip(
                     selected = !showAll,
-                    onClick = { vm.showAll(false) },
+                    onClick = hapticClick({ vm.showAll(false) }),
                     label = { Text(stringResource(R.string.resident_tab_active)) },
                 )
                 FilterChip(
                     selected = showAll,
-                    onClick = { vm.showAll(true) },
+                    onClick = hapticClick({ vm.showAll(true) }),
                     label = { Text(stringResource(R.string.resident_tab_all)) },
                 )
             }
@@ -109,7 +111,7 @@ fun MyReportsScreen(navigator: KavachNavigator) {
                         action = {
                             SecondaryButton(
                                 text = stringResource(R.string.resident_report_emergency),
-                                onClick = { navigator.navigate(Routes.ReportType) },
+                                onClick = hapticClick({ navigator.navigate(Routes.ReportType) }),
                             )
                         },
                     )
@@ -124,7 +126,7 @@ fun MyReportsScreen(navigator: KavachNavigator) {
                                 incident = incident,
                                 profile = profile,
                                 now = now,
-                                onClick = { navigator.navigate(Routes.Tracker(incident.id)) },
+                                onClick = hapticClick({ navigator.navigate(Routes.Tracker(incident.id)) }),
                                 modifier = reorderModifier().sharedBoundsFor(incidentSharedKey(incident.id)),
                             )
                         }

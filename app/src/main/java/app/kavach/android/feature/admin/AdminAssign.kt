@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -138,10 +140,10 @@ internal fun AssignSheet(
                 title = stringResource(R.string.admin_no_responders),
                 text = stringResource(R.string.admin_no_responders_text),
                 action = {
-                    TextButton(onClick = {
+                    TextButton(onClick = hapticClick({
                         close()
                         onOpenTeam()
-                    }) { Text(stringResource(R.string.admin_open_team)) }
+                    })) { Text(stringResource(R.string.admin_open_team)) }
                 },
             )
             else -> Column(Modifier.fillMaxWidth()) {
@@ -153,12 +155,12 @@ internal fun AssignSheet(
                         current = incident.assignedTo == member.id,
                         busy = busyId == member.id,
                         enabled = busyId == null && incident.assignedTo != member.id,
-                        onClick = {
+                        onClick = hapticClick({
                             vm.assign(incident.id, incident.assignedTo, member) {
                                 haptics.confirm()
                                 onDismiss()
                             }
-                        },
+                        }),
                     )
                 }
             }
@@ -184,7 +186,7 @@ private fun ResponderRow(
                 enabled = enabled,
                 role = Role.Button,
                 onClickLabel = stringResource(R.string.admin_assign_to_name, member.fullName),
-                onClick = onClick,
+                onClick = hapticClick(onClick),
             )
             .padding(vertical = Spacing.sm),
         verticalAlignment = Alignment.CenterVertically,

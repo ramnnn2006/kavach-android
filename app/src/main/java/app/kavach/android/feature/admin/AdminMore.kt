@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,6 +13,7 @@ import androidx.compose.material.icons.rounded.Campaign
 import androidx.compose.material.icons.rounded.HealthAndSafety
 import androidx.compose.material.icons.rounded.PhoneAndroid
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Tv
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -49,6 +52,8 @@ fun AdminMoreScreen(navigator: KavachNavigator) {
                 HorizontalDivider()
                 MoreRow(Icons.Rounded.Tv, colors.purple, R.string.nav_board) { navigator.navigate(Routes.CommandBoard) }
                 HorizontalDivider()
+                MoreRow(Icons.Rounded.Settings, colors.gray, R.string.settings_title) { navigator.navigate(Routes.Settings) }
+                HorizontalDivider()
                 MoreRow(Icons.Rounded.Person, colors.gray, R.string.nav_profile) { navigator.navigate(Routes.Profile) }
             }
         }
@@ -61,6 +66,6 @@ private fun MoreRow(icon: ImageVector, tone: Color, label: Int, onClick: () -> U
         title = stringResource(label),
         leading = { IconTile(icon, tone) },
         trailing = { ChevronIcon() },
-        onClick = onClick,
+        onClick = hapticClick(onClick),
     )
 }

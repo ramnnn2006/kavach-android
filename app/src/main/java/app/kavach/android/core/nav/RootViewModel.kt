@@ -66,7 +66,10 @@ class RootViewModel @Inject constructor(
             emit(shown)
             // SessionState can't tell "still loading" from "loaded, but there is no profile row":
             // after a while offer Try again / Log out instead of an endless spinner.
-            if (shown is RootUi.ProfileMissing && shown.error == null) {
+            if (shown == RootUi.Loading) {
+                delay(PROFILE_WAIT_MS)
+                emit(RootUi.ProfileMissing(KavachException(ErrorCode.Offline, "Session restore timed out")))
+            } else if (shown is RootUi.ProfileMissing && shown.error == null) {
                 delay(PROFILE_WAIT_MS)
                 emit(RootUi.ProfileMissing(KavachException(ErrorCode.Unknown, "profile not loaded")))
             }

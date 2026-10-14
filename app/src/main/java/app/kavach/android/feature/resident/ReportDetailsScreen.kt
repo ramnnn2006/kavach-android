@@ -1,5 +1,7 @@
 package app.kavach.android.feature.resident
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import android.content.Context
 import androidx.activity.compose.BackHandler
@@ -288,7 +290,7 @@ private fun DetailsStep(
                             color = KavachTheme.colors.textMuted,
                             modifier = Modifier.weight(1f),
                         )
-                        TextButton(onClick = vm::retryLifts) { Text(stringResource(R.string.common_retry)) }
+                        TextButton(onClick = hapticClick(vm::retryLifts)) { Text(stringResource(R.string.common_retry)) }
                     }
                     liftsHere == null -> Box(Modifier.fillMaxWidth().padding(Spacing.md), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
@@ -368,7 +370,7 @@ private fun DetailsStep(
     LifeDangerFooter()
 
     Button(
-        onClick = vm::review,
+        onClick = hapticClick(vm::review),
         colors = ButtonDefaults.buttonColors(containerColor = KavachTheme.colors.danger, contentColor = KavachTheme.colors.onAccent),
         modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
     ) {
@@ -432,7 +434,7 @@ private fun ReviewStep(
             Text(stringResource(R.string.resident_sending), style = MaterialTheme.typography.bodyMedium)
         }
     }
-    TextButton(onClick = vm::backToDetails, enabled = !ui.sending, modifier = Modifier.fillMaxWidth()) {
+    TextButton(onClick = hapticClick(vm::backToDetails), enabled = !ui.sending, modifier = Modifier.fillMaxWidth()) {
         Text(stringResource(R.string.resident_edit_details))
     }
     LifeDangerFooter()
@@ -486,7 +488,7 @@ private fun QueuedStep(
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 56.dp)
-                    .clickable(enabled = !retrying, role = Role.Button, onClick = onTryNow)
+                    .clickable(enabled = !retrying, role = Role.Button, onClick = hapticClick(onTryNow))
                     .padding(horizontal = Spacing.md, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -500,7 +502,7 @@ private fun QueuedStep(
             }
         }
     }
-    TextButton(onClick = onBackHome, modifier = Modifier.fillMaxWidth()) {
+    TextButton(onClick = hapticClick(onBackHome), modifier = Modifier.fillMaxWidth()) {
         Text(stringResource(R.string.resident_back_home))
     }
 }
@@ -555,7 +557,7 @@ private fun ChoiceRow(
         Modifier
             .fillMaxWidth()
             .heightIn(min = 56.dp)
-            .selectable(selected = selected, role = Role.RadioButton, onClick = onSelect)
+            .selectable(selected = selected, role = Role.RadioButton, onClick = hapticClick(onSelect))
             .padding(horizontal = Spacing.md, vertical = Spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -591,7 +593,7 @@ private fun PickerField(
         Text(label, style = MaterialTheme.typography.labelMedium, color = if (isError) danger else KavachTheme.colors.textMuted)
         Box {
             OutlinedButton(
-                onClick = { expanded = true },
+                onClick = hapticClick({ expanded = true }),
                 enabled = enabled,
                 border = BorderStroke(1.dp, if (isError) danger else MaterialTheme.colorScheme.outline),
                 modifier = Modifier
@@ -610,10 +612,10 @@ private fun PickerField(
                 options.forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option.label) },
-                        onClick = {
+                        onClick = hapticClick({
                             expanded = false
                             onSelect(option.key)
-                        },
+                        }),
                     )
                 }
             }

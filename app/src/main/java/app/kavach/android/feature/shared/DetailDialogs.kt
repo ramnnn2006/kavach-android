@@ -1,5 +1,7 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -79,7 +81,7 @@ internal fun NoteDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { onConfirm(note.trim()) },
+                onClick = hapticClick({ onConfirm(note.trim()) }),
                 enabled = !busy,
                 colors = if (destructive) {
                     ButtonDefaults.textButtonColors(contentColor = KavachTheme.colors.danger)
@@ -93,7 +95,7 @@ internal fun NoteDialog(
                 Text(confirmLabel)
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss, enabled = !busy) { Text(dismissLabel) } },
+        dismissButton = { TextButton(onClick = hapticClick(onDismiss), enabled = !busy) { Text(dismissLabel) } },
     )
 }
 
@@ -153,7 +155,7 @@ internal fun AssignDialog(
                                         current = responder.id == incident.assignedTo,
                                         enabled = !busy,
                                         pending = busy && responder.id == pendingId,
-                                        onClick = { onPick(responder) },
+                                        onClick = hapticClick({ onPick(responder) }),
                                     )
                                 }
                             }
@@ -163,7 +165,7 @@ internal fun AssignDialog(
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss, enabled = !busy) { Text(stringResource(R.string.common_cancel)) } },
+        dismissButton = { TextButton(onClick = hapticClick(onDismiss), enabled = !busy) { Text(stringResource(R.string.common_cancel)) } },
     )
 }
 
@@ -197,7 +199,7 @@ private fun ResponderRow(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 56.dp)
-            .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
+            .clickable(enabled = enabled, role = Role.Button, onClick = hapticClick(onClick))
             .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),

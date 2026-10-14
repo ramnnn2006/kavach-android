@@ -1,5 +1,7 @@
 package app.kavach.android.feature.responder
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -69,13 +71,13 @@ internal fun NoteDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(note.trim()) }, enabled = !busy) {
+            TextButton(onClick = hapticClick({ onConfirm(note.trim()) }), enabled = !busy) {
                 if (busy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                 Text(confirmLabel)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !busy) { Text(stringResource(R.string.common_cancel)) }
+            TextButton(onClick = hapticClick(onDismiss), enabled = !busy) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }

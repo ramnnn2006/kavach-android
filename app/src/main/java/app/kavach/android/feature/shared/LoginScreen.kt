@@ -1,5 +1,7 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -109,7 +111,7 @@ fun LoginScreen() {
         val phoneCodeStep = state.mode == LoginMode.Phone && state.step == PhoneStep.Code
         if (!phoneCodeStep) {
             TextButton(
-                onClick = { vm.setMode(if (state.mode == LoginMode.Phone) LoginMode.Email else LoginMode.Phone) },
+                onClick = hapticClick({ vm.setMode(if (state.mode == LoginMode.Phone) LoginMode.Email else LoginMode.Phone) }),
                 enabled = !state.busy,
             ) {
                 Text(
@@ -171,7 +173,7 @@ private fun PhoneNumberStep(state: LoginUiState, vm: LoginViewModel) {
         FormError(state.errorRes)
         ActionButton(
             text = stringResource(R.string.shared_login_send_code),
-            onClick = vm::sendCode,
+            onClick = hapticClick(vm::sendCode),
             busy = state.busy,
             enabled = state.phone.isNotBlank() && AppConfig.isSupabaseConfigured,
         )
@@ -210,12 +212,12 @@ private fun PhoneCodeStep(state: LoginUiState, vm: LoginViewModel) {
         FormError(state.errorRes)
         ActionButton(
             text = stringResource(R.string.shared_login_verify),
-            onClick = vm::verifyCode,
+            onClick = hapticClick(vm::verifyCode),
             busy = state.busy,
             enabled = state.code.length == LoginInput.CODE_LENGTH,
         )
         TextButton(
-            onClick = vm::resendCode,
+            onClick = hapticClick(vm::resendCode),
             enabled = !state.busy && state.resendSeconds == 0,
             modifier = Modifier.align(Alignment.CenterHorizontally),
         ) {
@@ -228,7 +230,7 @@ private fun PhoneCodeStep(state: LoginUiState, vm: LoginViewModel) {
             )
         }
         TextButton(
-            onClick = vm::changeNumber,
+            onClick = hapticClick(vm::changeNumber),
             enabled = !state.busy,
             modifier = Modifier.align(Alignment.CenterHorizontally),
         ) { Text(stringResource(R.string.shared_login_change_number)) }
@@ -260,7 +262,7 @@ private fun EmailStep(state: LoginUiState, vm: LoginViewModel) {
             enabled = !state.busy,
             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                IconButton(onClick = { showPassword = !showPassword }) {
+                IconButton(onClick = hapticClick({ showPassword = !showPassword })) {
                     Icon(
                         if (showPassword) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
                         contentDescription = stringResource(
@@ -276,7 +278,7 @@ private fun EmailStep(state: LoginUiState, vm: LoginViewModel) {
         FormError(state.errorRes)
         ActionButton(
             text = stringResource(R.string.shared_login_sign_in),
-            onClick = vm::signInWithEmail,
+            onClick = hapticClick(vm::signInWithEmail),
             busy = state.busy,
             enabled = AppConfig.isSupabaseConfigured,
             modifier = Modifier.padding(top = Spacing.xs),

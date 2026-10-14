@@ -1,5 +1,7 @@
 package app.kavach.android.feature.responder
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -169,7 +171,7 @@ private fun AlertsList(
                             if (ui.onDuty) R.string.responder_empty_open_text else R.string.responder_empty_open_off_text,
                         ),
                         action = {
-                            if (ui.onDuty) SecondaryButton(stringResource(R.string.responder_see_checks), onClick = onSeeChecks)
+                            if (ui.onDuty) SecondaryButton(stringResource(R.string.responder_see_checks), onClick = hapticClick(onSeeChecks))
                         },
                     )
                 }

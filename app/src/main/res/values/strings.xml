@@ -222,4 +222,19 @@
     <string name="nav_safety_check">Safety Check</string>
     <string name="nav_board">Command board</string>
     <string name="common_error_slow">This is taking longer than expected. Check again in a moment.</string>
+    <string name="settings_title">Settings &amp; accessibility</string>
+    <string name="settings_summary">Notifications, appearance and text size</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_on">On. Emergency alerts are enabled on this device.</string>
+    <string name="settings_notifications_off">Off. Emergency notifications will not appear.</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_system">Use device setting</string>
+    <string name="settings_light">Light</string>
+    <string name="settings_dark">Dark</string>
+    <string name="settings_text_size">Text size</string>
+    <string name="settings_text_percent">%1$d%% of device text size</string>
+    <string name="settings_smaller">Smaller</string>
+    <string name="settings_larger">Larger</string>
+    <string name="settings_reset">Reset to device text size</string>
+    <string name="settings_preview">Preview: Report an emergency or call security for help.</string>
 </resources>

@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -171,7 +173,7 @@ private fun ReportContent(bundle: ReportBundle, days: Int, onReviewCompliance: (
                         title = stringResource(R.string.admin_no_data_title, days),
                         text = stringResource(R.string.admin_no_data_text),
                         action = {
-                            OutlinedButton(onClick = onReviewCompliance) { Text(stringResource(R.string.admin_review_compliance)) }
+                            OutlinedButton(onClick = hapticClick(onReviewCompliance)) { Text(stringResource(R.string.admin_review_compliance)) }
                         },
                     )
                 }

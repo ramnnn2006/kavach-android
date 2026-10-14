@@ -1,5 +1,7 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -69,8 +71,7 @@ import app.kavach.android.core.ui.theme.Spacing
 
 /**
  * Profile for every role (Profile.jsx). Residents also edit safety information and the first
- * responder skill; staff see duty and specialties. Language, dark mode and text size follow the
- * system. Shown as a bottom tab for residents and responders (no back arrow) and pushed
+ * responder skill; staff see duty and specialties. Language follows the system; appearance and text size can be changed in Settings. Shown as a bottom tab for residents and responders (no back arrow) and pushed
  * from Admin "More" (back arrow).
  */
 @OptIn(ExperimentalLayoutApi::class)
@@ -148,6 +149,14 @@ fun ProfileScreen(navigator: KavachNavigator) {
                 )
             }
 
+            SectionHeader(stringResource(R.string.settings_title))
+            KavachCard(contentPadding = PaddingValues(0.dp)) {
+                ListRow(
+                    title = stringResource(R.string.settings_title),
+                    subtitle = stringResource(R.string.settings_summary),
+                    onClick = hapticClick({ navigator.navigate(Routes.Settings) }),
+                )
+            }
             SectionHeader(stringResource(R.string.shared_profile_section_alerts))
             KavachCard(contentPadding = PaddingValues(0.dp)) {
                 SwitchRow(
@@ -176,7 +185,7 @@ fun ProfileScreen(navigator: KavachNavigator) {
                             tint = KavachTheme.colors.textTertiary,
                         )
                     },
-                    onClick = { context.openAppNotificationSettings() },
+                    onClick = hapticClick({ context.openAppNotificationSettings() }),
                 )
             }
             if (!notificationsOn) {
@@ -188,7 +197,7 @@ fun ProfileScreen(navigator: KavachNavigator) {
                 )
             }
             if (android.os.Build.VERSION.SDK_INT >= 34) {
-                TextButton(onClick = { context.openFullScreenAlertSettings() }) {
+                TextButton(onClick = hapticClick({ context.openFullScreenAlertSettings() })) {
                     Text(stringResource(R.string.shared_full_screen_title))
                 }
             }
@@ -206,7 +215,7 @@ fun ProfileScreen(navigator: KavachNavigator) {
                             tint = KavachTheme.colors.textTertiary,
                         )
                     },
-                    onClick = { navigator.navigate(Routes.Walkthrough) },
+                    onClick = hapticClick({ navigator.navigate(Routes.Walkthrough) }),
                 )
                 GroupDivider()
                 ListRow(
@@ -342,8 +351,8 @@ private fun ActionRow(saveLabel: String, busy: Boolean, onCancel: () -> Unit, on
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        TextButton(onClick = onCancel, enabled = !busy) { Text(stringResource(R.string.common_cancel)) }
-        ActionButton(text = saveLabel, onClick = onSave, busy = busy, modifier = Modifier.weight(1f, fill = false))
+        TextButton(onClick = hapticClick(onCancel), enabled = !busy) { Text(stringResource(R.string.common_cancel)) }
+        ActionButton(text = saveLabel, onClick = hapticClick(onSave), busy = busy, modifier = Modifier.weight(1f, fill = false))
     }
 }
 

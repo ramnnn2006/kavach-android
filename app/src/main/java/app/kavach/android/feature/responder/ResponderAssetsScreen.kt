@@ -1,5 +1,7 @@
 package app.kavach.android.feature.responder
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import app.kavach.android.core.ui.components.toneText
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -121,7 +123,7 @@ private fun AssetsList(data: AssetsData, now: Instant, onEdit: (String) -> Unit)
                 KavachCard(contentPadding = PaddingValues(0.dp)) {
                     group.items.forEachIndexed { index, asset ->
                         if (index > 0) HorizontalDivider(color = KavachTheme.colors.separator)
-                        AssetRow(asset, now, onClick = { onEdit(asset.id) })
+                        AssetRow(asset, now, onClick = hapticClick({ onEdit(asset.id) }))
                     }
                 }
             }
@@ -141,7 +143,7 @@ private fun AssetRow(asset: Asset, now: Instant, onClick: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
-            .clickable(onClickLabel = stringResource(R.string.responder_edit_asset, asset.name), onClick = onClick)
+            .clickable(onClickLabel = stringResource(R.string.responder_edit_asset, asset.name), onClick = hapticClick(onClick))
             .padding(horizontal = Spacing.md, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),

@@ -21,6 +21,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -75,6 +77,9 @@ class LiveQueries @Inject constructor(
     @ApplicationScope private val appScope: CoroutineScope,
 ) {
     private val seq = AtomicInteger()
+    private val sharedQueries = object : LinkedHashMap<String, Flow<Loadable<Any?>>>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Flow<Loadable<Any?>>>?): Boolean = size > 48
+    }
 
     /**
      * Last data of keyed queries (LRU, small), so a query that restarts (a screen shown again
@@ -91,7 +96,10 @@ class LiveQueries @Inject constructor(
         // Never show one user's data to the next one
         appScope.launch {
             client.auth.sessionStatus.collect { status ->
-                if (status is SessionStatus.NotAuthenticated) synchronized(memory) { memory.clear() }
+                if (status is SessionStatus.NotAuthenticated) {
+                    synchronized(memory) { memory.clear() }
+                    synchronized(sharedQueries) { sharedQueries.clear() }
+                }
             }
         }
     }
@@ -107,6 +115,22 @@ class LiveQueries @Inject constructor(
         refresh: Flow<Unit>? = null,
         key: String? = null,
         fetch: suspend () -> T,
+    ): Flow<Loadable<T>> {
+        if (key == null) return liveQuery(tables, pollMillis, refresh, null, fetch)
+        val owner = client.auth.currentUserOrNull()?.id ?: return liveQuery(tables, pollMillis, refresh, key, fetch)
+        val identity = "$owner:$key"
+        @Suppress("UNCHECKED_CAST")
+        return synchronized(sharedQueries) {
+            sharedQueries.getOrPut(identity) {
+                liveQuery(tables, pollMillis, refresh, key, fetch)
+                    .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1) as Flow<Loadable<Any?>>
+            } as Flow<Loadable<T>>
+        }
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun <T> liveQuery(
+        tables: List<LiveTable>, pollMillis: Long?, refresh: Flow<Unit>?, key: String?, fetch: suspend () -> T,
     ): Flow<Loadable<T>> = channelFlow {
         val triggers = Channel<Unit>(Channel.CONFLATED)
         val trigger: () -> Unit = { triggers.trySend(Unit) }
@@ -200,7 +224,9 @@ class LiveQueries @Inject constructor(
                         ch.status.onEach { status ->
                             joiningSince.set(if (status == RealtimeChannel.Status.SUBSCRIBING) System.nanoTime() else 0L)
                             // Refetch after (re)joining so nothing missed while offline is lost
-                            if (status == RealtimeChannel.Status.SUBSCRIBED) onChange()
+                            if (status == RealtimeChannel.Status.SUBSCRIBED) {
+                                onChange()
+                            }
                         }.launchIn(this)
                         launch {
                             try {

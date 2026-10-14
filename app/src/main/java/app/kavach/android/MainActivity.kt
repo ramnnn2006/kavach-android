@@ -4,6 +4,10 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import app.kavach.android.core.data.prefs.SettingsStore
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -30,6 +34,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject lateinit var settings: SettingsStore
     @Inject lateinit var connectivity: ConnectivityObserver
     private val root: RootViewModel by viewModels()
 
@@ -53,10 +58,16 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val online by connectivity.isOnline.collectAsStateWithLifecycle()
-            KavachTheme {
+            val theme by settings.theme.collectAsStateWithLifecycle(initialValue = "system")
+            val textScale by settings.textScale.collectAsStateWithLifecycle(initialValue = 1f)
+            val density = LocalDensity.current
+            val dark = when (theme) { "dark" -> true; "light" -> false; else -> isSystemInDarkTheme() }
+            CompositionLocalProvider(LocalDensity provides Density(density.density, density.fontScale * textScale)) {
+            KavachTheme(darkTheme = dark) {
                 CompositionLocalProvider(LocalIsOnline provides online, LocalReduceMotion provides reduceMotion) {
                     KavachRoot(root)
                 }
+            }
             }
         }
     }

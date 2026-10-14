@@ -1,5 +1,7 @@
 package app.kavach.android.feature.responder
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -151,7 +153,7 @@ private fun CheckRow(item: ComplianceItem, status: ComplianceStatus, onMarkDone:
             Text(dueLine(item), style = MaterialTheme.typography.bodyMedium, color = dueTone)
             Text(lastDone, style = MaterialTheme.typography.bodySmall, color = KavachTheme.colors.textMuted)
         }
-        TextButton(onClick = onMarkDone, modifier = Modifier.semantics { contentDescription = markDoneCd }) {
+        TextButton(onClick = hapticClick(onMarkDone), modifier = Modifier.semantics { contentDescription = markDoneCd }) {
             Text(stringResource(R.string.responder_mark_done))
         }
     }

@@ -1,5 +1,10 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.hapticClick
+
+import androidx.compose.ui.res.painterResource
+import app.kavach.android.R
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -91,12 +96,12 @@ internal fun AuthFrame(
 /** The Kavach mark: a shield on the primary colour. */
 @Composable
 internal fun AppMark(modifier: Modifier = Modifier, size: Dp = 64.dp) {
-    Box(
-        modifier = modifier.size(size).clip(RoundedCornerShape(size / 4)).background(KavachTheme.colors.primary),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(Icons.Rounded.Shield, contentDescription = null, tint = KavachTheme.colors.onAccent, modifier = Modifier.size(size * 0.55f))
-    }
+    Icon(
+        painter = painterResource(R.drawable.ic_brand),
+        contentDescription = null,
+        tint = androidx.compose.ui.graphics.Color.Unspecified,
+        modifier = modifier.size(size),
+    )
 }
 
 /** First letter of the name in a circle (the website's Avatar). */
@@ -167,7 +172,7 @@ internal fun ActionButton(
         ButtonDefaults.buttonColors()
     }
     Button(
-        onClick = onClick,
+        onClick = hapticClick(onClick),
         modifier = modifier.fillMaxWidth().heightIn(min = 52.dp),
         enabled = enabled && !busy,
         colors = colors,
@@ -228,10 +233,10 @@ internal fun PickerField(
                 options.forEachIndexed { index, option ->
                     DropdownMenuItem(
                         text = { Text(option) },
-                        onClick = {
+                        onClick = hapticClick({
                             expanded = false
                             onSelect(index)
-                        },
+                        }),
                     )
                 }
             }

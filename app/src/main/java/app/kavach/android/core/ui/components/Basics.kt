@@ -1,5 +1,7 @@
 package app.kavach.android.core.ui.components
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -87,7 +89,7 @@ fun KavachScaffold(
                 },
                 navigationIcon = {
                     if (onBack != null) {
-                        IconButton(onClick = onBack) {
+                        IconButton(onClick = hapticClick(onBack)) {
                             Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.common_back))
                         }
                     }
@@ -142,7 +144,7 @@ fun KavachCard(
         Column(Modifier.fillMaxWidth().then(stripe).padding(contentPadding), content = content)
     }
     if (onClick != null) {
-        Card(onClick = onClick, modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, colors = colors) { body() }
+        Card(onClick = hapticClick(onClick), modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, colors = colors) { body() }
     } else {
         Card(modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, colors = colors) { body() }
     }
@@ -162,7 +164,7 @@ fun ListRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
+            .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = hapticClick(onClick)) else Modifier)
             .heightIn(min = 48.dp)
             .padding(horizontal = Spacing.md, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -250,7 +252,7 @@ fun EscalationBadge(level: Int, modifier: Modifier = Modifier) {
 /** Big number + label (Stat). */
 @Composable
 fun StatTile(value: String, label: String, modifier: Modifier = Modifier, tone: Color = Color.Unspecified, onClick: (() -> Unit)? = null) {
-    KavachCard(modifier = modifier, onClick = onClick) {
+    KavachCard(modifier = modifier, onClick = if (onClick != null) hapticClick(onClick) else null) {
         Text(value, style = MaterialTheme.typography.headlineMedium, color = if (tone.isSpecified) toneText(tone) else tone)
         Spacer(Modifier.height(2.dp))
         Text(label, style = MaterialTheme.typography.bodySmall, color = KavachTheme.colors.textMuted)

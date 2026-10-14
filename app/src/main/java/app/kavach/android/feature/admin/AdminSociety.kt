@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -219,7 +221,7 @@ fun AdminSocietyScreen(navigator: KavachNavigator) {
                 tabs.forEach { tab ->
                     Tab(
                         selected = tab == current,
-                        onClick = { tabIndex = tab.ordinal },
+                        onClick = hapticClick({ tabIndex = tab.ordinal }),
                         text = { Text(stringResource(tab.label)) },
                     )
                 }

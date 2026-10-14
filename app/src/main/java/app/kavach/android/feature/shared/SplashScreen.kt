@@ -1,5 +1,7 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -73,10 +75,10 @@ fun SplashScreen(
                     modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 )
                 if (onRetry != null) {
-                    ActionButton(stringResource(R.string.common_retry), onClick = onRetry, modifier = Modifier.padding(top = Spacing.sm))
+                    ActionButton(stringResource(R.string.common_retry), onClick = hapticClick(onRetry), modifier = Modifier.padding(top = Spacing.sm))
                 }
                 if (onSignOut != null) {
-                    TextButton(onClick = { confirmLogOut = true }) { Text(stringResource(R.string.shared_log_out)) }
+                    TextButton(onClick = hapticClick({ confirmLogOut = true })) { Text(stringResource(R.string.shared_log_out)) }
                 }
             }
         }

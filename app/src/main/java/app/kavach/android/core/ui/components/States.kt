@@ -1,5 +1,7 @@
 package app.kavach.android.core.ui.components
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -72,7 +74,7 @@ fun ErrorState(error: Throwable, onRetry: (() -> Unit)?, modifier: Modifier = Mo
         icon = Icons.Rounded.ErrorOutline,
         title = stringResource(error.messageRes()),
         modifier = modifier,
-        action = onRetry?.let { retry -> { TextButton(onClick = retry) { Text(stringResource(R.string.common_retry)) } } },
+        action = onRetry?.let { retry -> { TextButton(onClick = hapticClick(retry)) { Text(stringResource(R.string.common_retry)) } } },
     )
 }
 
@@ -87,7 +89,7 @@ fun ErrorBanner(error: Throwable, onRetry: (() -> Unit)?, modifier: Modifier = M
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(stringResource(error.messageRes()), style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
-        if (onRetry != null) TextButton(onClick = onRetry) { Text(stringResource(R.string.common_retry)) }
+        if (onRetry != null) TextButton(onClick = hapticClick(onRetry)) { Text(stringResource(R.string.common_retry)) }
     }
 }
 

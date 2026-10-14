@@ -1,5 +1,7 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
@@ -137,7 +139,7 @@ fun IncidentDetailScreen(navigator: KavachNavigator) {
                     title = stringResource(R.string.shared_detail_not_found_title),
                     text = stringResource(R.string.shared_detail_not_found_text),
                     action = {
-                        SecondaryButton(text = stringResource(R.string.shared_detail_back), onClick = { navigator.back() })
+                        SecondaryButton(text = stringResource(R.string.shared_detail_back), onClick = hapticClick({ navigator.back() }))
                     },
                 )
             }
@@ -332,7 +334,7 @@ private fun Timeline(events: List<IncidentEvent>) {
     }
     EventTimeline(if (expanded || hidden <= 0) events else events.takeLast(TIMELINE_VISIBLE), staff = true)
     if (hidden > 0) {
-        TextButton(onClick = { expanded = !expanded }) {
+        TextButton(onClick = hapticClick({ expanded = !expanded })) {
             Text(
                 if (expanded) {
                     stringResource(R.string.shared_d_show_less)
@@ -378,7 +380,7 @@ private fun ActionButtons(
         if (showClaim) {
             ActionButton(
                 text = stringResource(R.string.common_action_claim),
-                onClick = onClaim,
+                onClick = hapticClick(onClaim),
                 busy = busy == DetailAction.Claim,
                 enabled = claimBlock == null && busy == null,
             )
@@ -394,14 +396,14 @@ private fun ActionButtons(
             val label = incident.status.nextActionRes()
             ActionButton(
                 text = stringResource(label ?: R.string.common_action_resolve),
-                onClick = { onAdvance(next) },
+                onClick = hapticClick({ onAdvance(next) }),
                 busy = busy == DetailAction.Advance,
                 enabled = busy == null,
                 tone = if (next == IncidentStatus.Resolved) KavachTheme.colors.success else null,
             )
             if (next != IncidentStatus.Resolved) {
                 TextButton(
-                    onClick = onResolveEarly,
+                    onClick = hapticClick(onResolveEarly),
                     enabled = busy == null,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                 ) { Text(stringResource(R.string.common_action_resolve)) }
@@ -552,7 +554,7 @@ private fun AdminCard(
                 ),
                 leading = { IconTile(Icons.Rounded.PersonAdd, KavachTheme.colors.blue, size = 36.dp) },
                 trailing = { Chevron() },
-                onClick = { if (enabled) onAssign() },
+                onClick = hapticClick({ if (enabled) onAssign() }),
             )
             HorizontalDivider(color = KavachTheme.colors.separator)
         }
@@ -562,7 +564,7 @@ private fun AdminCard(
             trailing = {
                 if (sharing) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp) else Chevron()
             },
-            onClick = { if (enabled) onShare() },
+            onClick = hapticClick({ if (enabled) onShare() }),
         )
         if (incident.isActive) {
             HorizontalDivider(color = KavachTheme.colors.separator)
@@ -570,7 +572,7 @@ private fun AdminCard(
                 title = stringResource(R.string.shared_detail_cancel_incident),
                 titleColor = KavachTheme.colors.danger,
                 leading = { IconTile(Icons.Rounded.Cancel, KavachTheme.colors.red, size = 36.dp) },
-                onClick = { if (enabled) onCancel() },
+                onClick = hapticClick({ if (enabled) onCancel() }),
             )
         }
     }

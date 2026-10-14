@@ -1,5 +1,7 @@
 package app.kavach.android.feature.resident
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -77,7 +79,7 @@ fun ReportTypeScreen(navigator: KavachNavigator) {
                         trailing = {
                             Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null, tint = KavachTheme.colors.textTertiary)
                         },
-                        onClick = { navigator.navigate(Routes.ReportDetails(type.wire)) },
+                        onClick = hapticClick({ navigator.navigate(Routes.ReportDetails(type.wire)) }),
                     )
                 }
             }

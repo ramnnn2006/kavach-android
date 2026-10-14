@@ -1,5 +1,7 @@
 package app.kavach.android.feature.shared
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import app.kavach.android.core.ui.components.toneText
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -137,9 +139,9 @@ fun SetupScreen(onDone: () -> Unit) {
         )
 
         Spacer(Modifier.height(Spacing.xs))
-        ActionButton(text = stringResource(R.string.shared_setup_continue), onClick = onDone)
+        ActionButton(text = stringResource(R.string.shared_setup_continue), onClick = hapticClick(onDone))
         if (!allDone) {
-            TextButton(onClick = onDone) { Text(stringResource(R.string.shared_setup_skip)) }
+            TextButton(onClick = hapticClick(onDone)) { Text(stringResource(R.string.shared_setup_skip)) }
         }
     }
 }
@@ -183,7 +185,7 @@ private fun SetupStep(
                 Text(doneText, style = MaterialTheme.typography.bodyMedium, color = toneText(KavachTheme.colors.success))
             }
         } else {
-            FilledTonalButton(onClick = onAction, modifier = Modifier.fillMaxWidth()) { Text(actionLabel) }
+            FilledTonalButton(onClick = hapticClick(onAction), modifier = Modifier.fillMaxWidth()) { Text(actionLabel) }
         }
     }
 }

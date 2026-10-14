@@ -1,5 +1,7 @@
 package app.kavach.android.feature.resident
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -91,6 +93,42 @@ fun ResidentHomeScreen(navigator: KavachNavigator) {
             contentPadding = PaddingValues(horizontal = Spacing.screen, vertical = Spacing.sm),
             verticalArrangement = Arrangement.spacedBy(Spacing.md),
         ) {
+            item(key = "report") {
+                Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                    Button(
+                        onClick = hapticClick({ navigator.navigate(Routes.ReportType) }),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = KavachTheme.colors.danger,
+                            contentColor = KavachTheme.colors.onAccent,
+                        ),
+                        contentPadding = PaddingValues(Spacing.md),
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 144.dp),
+                    ) {
+                        Icon(Icons.Rounded.Warning, contentDescription = null, modifier = Modifier.size(40.dp))
+                        Column(Modifier.weight(1f).padding(start = Spacing.md)) {
+                            Text(stringResource(R.string.resident_report_emergency), style = MaterialTheme.typography.titleMedium)
+                            Text(stringResource(R.string.resident_report_emergency_sub), style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
+                    KavachCard(onClick = hapticClick({ navigator.navigate(Routes.ReportDetails(IncidentType.Lift.wire)) })) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            TypeIcon(IncidentType.Lift, size = 36.dp)
+                            Column(Modifier.weight(1f)) {
+                                Text(stringResource(R.string.resident_stuck_in_lift), style = MaterialTheme.typography.titleMedium)
+                                Text(
+                                    stringResource(R.string.resident_stuck_in_lift_sub),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = KavachTheme.colors.textMuted,
+                                )
+                            }
+                            Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null, tint = KavachTheme.colors.textTertiary)
+                        }
+                    }
+                }
+            }
+
+
             safetyCard?.let { card ->
                 item(key = "safety-check") {
                     SafetyCheckCard(
@@ -126,46 +164,12 @@ fun ResidentHomeScreen(navigator: KavachNavigator) {
                     ActiveReportRow(
                         incident = incident,
                         now = now,
-                        onClick = { openTracker(incident.id) },
+                        onClick = hapticClick({ openTracker(incident.id) }),
                         modifier = reorderModifier(),
                     )
                 }
             }
 
-            item(key = "report") {
-                Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
-                    Button(
-                        onClick = { navigator.navigate(Routes.ReportType) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = KavachTheme.colors.danger,
-                            contentColor = KavachTheme.colors.onAccent,
-                        ),
-                        contentPadding = PaddingValues(Spacing.md),
-                        shape = MaterialTheme.shapes.large,
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 72.dp),
-                    ) {
-                        Icon(Icons.Rounded.Warning, contentDescription = null, modifier = Modifier.size(28.dp))
-                        Column(Modifier.weight(1f).padding(start = Spacing.md)) {
-                            Text(stringResource(R.string.resident_report_emergency), style = MaterialTheme.typography.titleMedium)
-                            Text(stringResource(R.string.resident_report_emergency_sub), style = MaterialTheme.typography.bodySmall)
-                        }
-                    }
-                    KavachCard(onClick = { navigator.navigate(Routes.ReportDetails(IncidentType.Lift.wire)) }) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            TypeIcon(IncidentType.Lift, size = 36.dp)
-                            Column(Modifier.weight(1f)) {
-                                Text(stringResource(R.string.resident_stuck_in_lift), style = MaterialTheme.typography.titleMedium)
-                                Text(
-                                    stringResource(R.string.resident_stuck_in_lift_sub),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = KavachTheme.colors.textMuted,
-                                )
-                            }
-                            Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null, tint = KavachTheme.colors.textTertiary)
-                        }
-                    }
-                }
-            }
 
             item(key = "quick-call") {
                 Column {
@@ -214,7 +218,7 @@ fun ResidentHomeScreen(navigator: KavachNavigator) {
                     SectionHeader(
                         stringResource(R.string.resident_recent_title),
                         trailing = {
-                            TextButton(onClick = { navigator.openTab(Routes.MyReports) }) {
+                            TextButton(onClick = hapticClick({ navigator.openTab(Routes.MyReports) })) {
                                 Text(stringResource(R.string.resident_see_all))
                             }
                         },
@@ -225,7 +229,7 @@ fun ResidentHomeScreen(navigator: KavachNavigator) {
                         incident = incident,
                         profile = profile,
                         now = now,
-                        onClick = { openTracker(incident.id) },
+                        onClick = hapticClick({ openTracker(incident.id) }),
                         modifier = reorderModifier(),
                     )
                 }

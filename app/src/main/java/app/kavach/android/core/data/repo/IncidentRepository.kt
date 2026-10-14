@@ -83,12 +83,17 @@ class IncidentRepository @Inject constructor(
         }
     }
 
-    suspend fun get(id: String): Incident? = db.call {
-        from("incidents").select(cols) { filter { eq("id", id) } }.decodeSingleOrNull<Incident>()
+    suspend fun get(id: String, ownOnly: Boolean = false): Incident? = db.call {
+        from("incidents").select(cols) {
+            filter {
+                eq("id", id)
+                if (ownOnly) eq("reporter_id", db.myId())
+            }
+        }.decodeSingleOrNull<Incident>()
     }
 
-    fun listen(id: String): Flow<Loadable<Incident?>> =
-        live.live("incident:$id", table("incidents", "id", id)) { get(id) }
+    fun listen(id: String, ownOnly: Boolean = false): Flow<Loadable<Incident?>> =
+        live.live("incident:$id:own=$ownOnly", table("incidents", "id", id)) { get(id, ownOnly) }
 
     suspend fun events(incidentId: String): List<IncidentEvent> = db.call {
         from("incident_events").select(Columns.raw(EVENT_COLUMNS)) {

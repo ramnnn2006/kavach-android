@@ -1,11 +1,21 @@
 package app.kavach.android.core.nav
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -29,13 +39,17 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -43,8 +57,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -81,6 +93,7 @@ import app.kavach.android.feature.responder.ResponderHistoryScreen
 import app.kavach.android.feature.shared.IncidentDetailScreen
 import app.kavach.android.feature.shared.LoginScreen
 import app.kavach.android.feature.shared.ProfileScreen
+import app.kavach.android.feature.shared.SettingsScreen
 import app.kavach.android.feature.shared.SetupScreen
 import app.kavach.android.feature.shared.SplashScreen
 import app.kavach.android.feature.shared.WalkthroughScreen
@@ -138,15 +151,25 @@ fun KavachRoot(vm: RootViewModel) {
 private fun RoleShell(role: UserRole, pendingLink: DeepLink?, onLinkHandled: () -> Unit) {
     val nav = rememberNavController()
     val tabs = Tabs.forRole(role)
-    val navigator = remember(nav, tabs) { NavControllerNavigator(nav, tabs) }
+    val reduceMotion = rememberReduceMotion()
+    val pager = rememberPagerState(pageCount = { tabs.size })
+    val scope = rememberCoroutineScope()
+    val haptics = app.kavach.android.core.ui.components.rememberHaptics()
+    LaunchedEffect(pager) {
+        snapshotFlow { pager.settledPage }.distinctUntilChanged().drop(1).collect { haptics.tick() }
+    }
+    val navigator = remember(nav, tabs, pager, reduceMotion) {
+        NavControllerNavigator(nav, tabs) { index ->
+            scope.launch { if (reduceMotion) pager.scrollToPage(index) else pager.animateScrollToPage(index) }
+        }
+    }
     // The back stack is read only where it's needed (bar, snackbar offset) and through derived
     // states, so this shell (and the NavHost call) doesn't recompose on every navigation.
     val backStack = nav.currentBackStackEntryAsState()
     val onTab = remember(backStack, tabs) {
-        derivedStateOf { backStack.value?.destination?.let { d -> tabs.any { d.hasRoute(it.route::class) } } == true }
+        derivedStateOf { backStack.value?.destination?.let { d -> d.hasRoute<Routes.TabPager>() } == true }
     }
     val graphReady by remember(backStack) { derivedStateOf { backStack.value != null } }
-    val reduceMotion = rememberReduceMotion()
 
     // Notification tap: open its screen once the graph is set
     LaunchedEffect(pendingLink, graphReady) {
@@ -168,7 +191,7 @@ private fun RoleShell(role: UserRole, pendingLink: DeepLink?, onLinkHandled: () 
             }
             SnackbarHost(LocalSnackbarHostState.current, Modifier.windowInsetsPadding(insets))
         },
-        bottomBar = { if (onTab.value) RoleBottomBar(tabs, backStack, navigator) },
+        bottomBar = { if (onTab.value) RoleBottomBar(tabs, pager.currentPage, navigator) },
     ) { padding ->
         val online = LocalIsOnline.current
         Column(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
@@ -180,10 +203,34 @@ private fun RoleShell(role: UserRole, pendingLink: DeepLink?, onLinkHandled: () 
                 CompositionLocalProvider(LocalSharedTransitionScope provides this) {
                     NavHost(
                         navController = nav,
-                        startDestination = Tabs.home(role),
+                        startDestination = Routes.TabPager,
                         enterTransition = { if (reduceMotion) EnterTransition.None else fadeIn() },
                         exitTransition = { if (reduceMotion) ExitTransition.None else fadeOut() },
                     ) {
+                        screen<Routes.TabPager> {
+                            val savedTabs = rememberSaveableStateHolder()
+                            // Hoisted outside page composition: offscreen disposal must not
+                            // destroy a tab's navigation entry or ViewModelStore.
+                            val tabControllers = tabs.map { tab ->
+                                key(tab.route) { rememberNavController() }
+                            }
+                            HorizontalPager(
+                                state = pager,
+                                modifier = Modifier.fillMaxSize(),
+                                key = { tabs[it].route.toString() },
+                                // Android owns the system edge-back gesture; no exclusions or
+                                // custom horizontal pointer handlers are installed here.
+                            ) { page ->
+                                savedTabs.SaveableStateProvider(tabs[page].route.toString()) {
+                                    // A separate tab-root entry keeps each tab's ViewModels and
+                                    // SavedStateHandle alive, even when the pager disposes its UI.
+                                    val tabNav = tabControllers[page]
+                                    NavHost(tabNav, startDestination = tabs[page].route) {
+                                        tabRoot(tabs[page].route, navigator)
+                                    }
+                                }
+                            }
+                        }
                         sharedRoutes(navigator, role)
                         when (role) {
                             UserRole.Resident -> residentRoutes(navigator)
@@ -199,11 +246,16 @@ private fun RoleShell(role: UserRole, pendingLink: DeepLink?, onLinkHandled: () 
 
 /** The role's bottom tabs. Recomposes on navigation, without taking the shell with it. */
 @Composable
-private fun RoleBottomBar(tabs: List<Tab>, backStack: State<NavBackStackEntry?>, navigator: KavachNavigator) {
-    val destination = backStack.value?.destination
-    NavigationBar {
-        tabs.forEach { tab ->
-            val selected = destination?.hierarchy?.any { it.hasRoute(tab.route::class) } == true
+private fun RoleBottomBar(tabs: List<Tab>, selectedPage: Int, navigator: KavachNavigator) {
+    Surface(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(32.dp),
+        tonalElevation = 3.dp,
+        shadowElevation = 6.dp,
+    ) {
+    NavigationBar(windowInsets = WindowInsets(0), containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+        tabs.forEachIndexed { index, tab ->
+            val selected = selectedPage == index
             NavigationBarItem(
                 selected = selected,
                 onClick = { navigator.openTab(tab.route) },
@@ -220,6 +272,7 @@ private fun RoleBottomBar(tabs: List<Tab>, backStack: State<NavBackStackEntry?>,
         }
     }
 }
+}
 
 /** Registers a routed screen and gives it the AnimatedVisibilityScope for shared elements. */
 private inline fun <reified T : Route> NavGraphBuilder.screen(
@@ -230,35 +283,44 @@ private inline fun <reified T : Route> NavGraphBuilder.screen(
     }
 }
 
+/** Tab roots live only inside the pager, never in the outer detail stack. */
+private fun NavGraphBuilder.tabRoot(route: Route, navigator: KavachNavigator) {
+    when (route) {
+        Routes.ResidentHome -> screen<Routes.ResidentHome> { ResidentHomeScreen(navigator) }
+        Routes.MyReports -> screen<Routes.MyReports> { MyReportsScreen(navigator) }
+        Routes.ResidentNotices -> screen<Routes.ResidentNotices> { ResidentNoticesScreen(navigator) }
+        Routes.Contacts -> screen<Routes.Contacts> { ContactsScreen(navigator) }
+        Routes.ResponderAlerts -> screen<Routes.ResponderAlerts> { ResponderAlertsScreen(navigator) }
+        Routes.ResponderChecks -> screen<Routes.ResponderChecks> { ResponderChecksScreen(navigator) }
+        Routes.ResponderAssets -> screen<Routes.ResponderAssets> { ResponderAssetsScreen(navigator) }
+        Routes.ResponderHistory -> screen<Routes.ResponderHistory> { ResponderHistoryScreen(navigator) }
+        Routes.AdminOverview -> screen<Routes.AdminOverview> { AdminOverviewScreen(navigator) }
+        Routes.AdminIncidents -> screen<Routes.AdminIncidents> { AdminIncidentsScreen(navigator) }
+        Routes.AdminTeam -> screen<Routes.AdminTeam> { AdminTeamScreen(navigator) }
+        Routes.AdminSociety -> screen<Routes.AdminSociety> { AdminSocietyScreen(navigator) }
+        Routes.AdminMore -> screen<Routes.AdminMore> { AdminMoreScreen(navigator) }
+        Routes.Profile -> screen<Routes.Profile> { ProfileScreen(navigator) }
+        else -> error("Not a tab root: $route")
+    }
+}
+
 private fun NavGraphBuilder.sharedRoutes(navigator: KavachNavigator, role: UserRole) {
-    screen<Routes.Profile> { ProfileScreen(navigator) }
+    screen<Routes.Settings> { SettingsScreen(navigator) }
+    if (role == UserRole.Admin) screen<Routes.Profile> { ProfileScreen(navigator) }
     screen<Routes.Walkthrough> { WalkthroughScreen(role, onDone = navigator::back) }
     if (role != UserRole.Resident) screen<Routes.IncidentDetail> { IncidentDetailScreen(navigator) }
 }
 
 private fun NavGraphBuilder.residentRoutes(navigator: KavachNavigator) {
-    screen<Routes.ResidentHome> { ResidentHomeScreen(navigator) }
     screen<Routes.ReportType> { ReportTypeScreen(navigator) }
     screen<Routes.ReportDetails> { ReportDetailsScreen(navigator) }
     screen<Routes.Tracker> { TrackerScreen(navigator) }
-    screen<Routes.MyReports> { MyReportsScreen(navigator) }
-    screen<Routes.ResidentNotices> { ResidentNoticesScreen(navigator) }
-    screen<Routes.Contacts> { ContactsScreen(navigator) }
 }
 
 private fun NavGraphBuilder.responderRoutes(navigator: KavachNavigator) {
-    screen<Routes.ResponderAlerts> { ResponderAlertsScreen(navigator) }
-    screen<Routes.ResponderChecks> { ResponderChecksScreen(navigator) }
-    screen<Routes.ResponderAssets> { ResponderAssetsScreen(navigator) }
-    screen<Routes.ResponderHistory> { ResponderHistoryScreen(navigator) }
 }
 
 private fun NavGraphBuilder.adminRoutes(navigator: KavachNavigator) {
-    screen<Routes.AdminOverview> { AdminOverviewScreen(navigator) }
-    screen<Routes.AdminIncidents> { AdminIncidentsScreen(navigator) }
-    screen<Routes.AdminTeam> { AdminTeamScreen(navigator) }
-    screen<Routes.AdminSociety> { AdminSocietyScreen(navigator) }
-    screen<Routes.AdminMore> { AdminMoreScreen(navigator) }
     screen<Routes.AdminMembers> { AdminMembersScreen(navigator) }
     screen<Routes.AdminReports> { AdminReportsScreen(navigator) }
     screen<Routes.AdminNotices> { AdminNoticesScreen(navigator) }
@@ -269,9 +331,11 @@ private fun NavGraphBuilder.adminRoutes(navigator: KavachNavigator) {
 private class NavControllerNavigator(
     private val nav: NavHostController,
     private val tabs: List<Tab>,
+    private val selectPage: (Int) -> Unit,
 ) : KavachNavigator {
 
     override fun navigate(route: Route) {
+        if (tabs.any { it.route == route }) { openTab(route); return }
         val top = nav.currentBackStackEntry
         if (top != null && top.destination.hasRoute(route::class)) {
             // Same screen again. A repeated tap does nothing, but another item (a notification
@@ -298,25 +362,13 @@ private class NavControllerNavigator(
     }
 
     override fun openTab(route: Route) {
-        // Screens pushed on the current tab are dropped, not saved: "Back to home" from a report
-        // or the tracker must not keep it (and its ViewModel) in a saved back stack. Saving them
-        // also made "go to the tab I'm already in" a no-op: the save/restore pair below put them
-        // straight back. Only tab roots keep their state when switching tabs.
-        val root = currentTabRoot()
-        nav.popBackStack(root, inclusive = false, saveState = false)
-        if (route == root) return
-        nav.navigate(route) {
-            popUpTo(nav.graph.findStartDestination().id) { saveState = true }
-            launchSingleTop = true
-            restoreState = true
-        }
+        val index = tabs.indexOfFirst { it.route == route }
+        require(index >= 0) { "Not a tab for this role: $route" }
+        // Only detail screens are discarded. The pager entry and tab owners remain alive.
+        nav.popBackStack<Routes.TabPager>(inclusive = false)
+        selectPage(index)
     }
 
-    /** Root of the tab in use. Switching tabs pops back to home first, so at most one other tab is on the stack. */
-    private fun currentTabRoot(): Route =
-        tabs.drop(1).firstOrNull { tab -> isOnStack(tab.route) }?.route ?: tabs.first().route
-
-    private fun isOnStack(route: Route): Boolean = runCatching { nav.getBackStackEntry(route) }.isSuccess
 }
 
 /**

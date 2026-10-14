@@ -1,5 +1,7 @@
 package app.kavach.android.feature.admin
 
+import app.kavach.android.core.ui.components.hapticClick
+
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -219,7 +221,7 @@ fun AdminTeamScreen(navigator: KavachNavigator) {
                     member = m,
                     isSelf = m.id == vm.myId,
                     now = now,
-                    onClick = {
+                    onClick = hapticClick({
                         openSheet(
                             MemberEdit(
                                 id = m.id,
@@ -230,7 +232,7 @@ fun AdminTeamScreen(navigator: KavachNavigator) {
                                 activeLoad = m.activeLoad,
                             ),
                         )
-                    },
+                    }),
                 )
             }
 
@@ -244,7 +246,7 @@ fun AdminTeamScreen(navigator: KavachNavigator) {
                     leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                     trailingIcon = if (query.isNotEmpty()) {
                         {
-                            IconButton(onClick = { query = "" }) {
+                            IconButton(onClick = hapticClick({ query = "" })) {
                                 Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.admin_clear_search))
                             }
                         }
@@ -268,7 +270,7 @@ fun AdminTeamScreen(navigator: KavachNavigator) {
                             text = stringResource(if (queryText.isNotEmpty()) R.string.admin_no_match_text else R.string.admin_no_residents_text),
                             action = if (queryText.isNotEmpty()) {
                                 {
-                                    OutlinedButton(onClick = { query = "" }) { Text(stringResource(R.string.admin_clear_search)) }
+                                    OutlinedButton(onClick = hapticClick({ query = "" })) { Text(stringResource(R.string.admin_clear_search)) }
                                 }
                             } else {
                                 null
@@ -314,7 +316,7 @@ fun AdminTeamScreen(navigator: KavachNavigator) {
 private fun StaffRow(member: TeamMember, isSelf: Boolean, now: Instant, onClick: () -> Unit) {
     val context = LocalContext.current
     val editLabel = stringResource(R.string.admin_edit_member, member.fullName)
-    KavachCard(onClick = onClick, modifier = Modifier.semantics { contentDescription = editLabel }) {
+    KavachCard(onClick = hapticClick(onClick), modifier = Modifier.semantics { contentDescription = editLabel }) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             InitialsAvatar(member.fullName)
             Column(Modifier.weight(1f)) {
@@ -381,7 +383,7 @@ private fun ResidentRow(member: Member, onMakeStaff: () -> Unit) {
                     )
                 }
             }
-            TextButton(onClick = onMakeStaff, modifier = Modifier.semantics { contentDescription = makeStaffLabel }) {
+            TextButton(onClick = hapticClick(onMakeStaff), modifier = Modifier.semantics { contentDescription = makeStaffLabel }) {
                 Text(stringResource(R.string.admin_make_staff))
             }
         }
