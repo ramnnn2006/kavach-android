@@ -38,21 +38,26 @@ jobs:
           umask 077
           printf '%s\n' "$KAVACH_PROPERTIES" > kavach.properties
           mkdir -p "$HOME/.android"
-          printf '%s' "$TEST_KEYSTORE_BASE64" | base64 --decode > "$HOME/.android/debug.keystore"
+          printf '%s' "$TEST_KEYSTORE_BASE64" | base64 --decode > kavach-test.keystore
       - name: Test and build arm64 release
         run: >-
           gradle :app:testDebugUnitTest :app:assembleRelease
           -Pkavach.targetAbi=arm64-v8a -Pkavach.testRelease=true
+          -Pkavach.testKeystore=${{ github.workspace }}/kavach-test.keystore
           --no-daemon --max-workers=2
           -Dorg.gradle.jvmargs=-Xmx4g
+      - name: Verify test release certificate
+        run: |
+          cert=$("$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --print-certs app/build/outputs/apk/release/app-release.apk | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')
+          test "$cert" = "1dd9890af8148271a026039a66f9ab26ca6dfdc8f9dddfaf0d25d142e2af31fb"
       - name: Name APK
-        run: cp app/build/outputs/apk/release/app-release.apk kavach-0.1.0-arm64-release.apk
+        run: cp app/build/outputs/apk/release/app-release.apk kavach-0.1.1-arm64-release.apk
       - uses: actions/upload-artifact@v4
         with:
           name: kavach-arm64-test-release
-          path: kavach-0.1.0-arm64-release.apk
+          path: kavach-0.1.1-arm64-release.apk
           if-no-files-found: error
           retention-days: 7
       - name: Remove private build inputs
         if: always()
-        run: rm -f kavach.properties "$HOME/.android/debug.keystore"
+        run: rm -f kavach.properties kavach-test.keystore
