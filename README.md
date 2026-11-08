@@ -4,17 +4,19 @@ Android app for reporting and handling safety issues in residential societies. R
 
 Built with Kotlin and Jetpack Compose, backed by Supabase Auth, Postgres and Realtime. Room and WorkManager handle pending reports and retries.
 
-<p align="center">
-  <img src="docs/screenshots/home.png" width="18%" alt="Home. Report an emergency or answer a Safety Check.">
-  <img src="docs/screenshots/report.png" width="18%" alt="What's happening. Pick fire, medical, a stuck lift, and the rest.">
-  <img src="docs/screenshots/tracker.png" width="18%" alt="Your alert. See who is on the way.">
-  <img src="docs/screenshots/responder.png" width="18%" alt="On duty. Claim an alert and update it.">
-  <img src="docs/screenshots/admin.png" width="18%" alt="Overview. What is open, and who should go.">
-</p>
-
-<p align="center">
-  <strong>Home</strong> · <strong>What's happening</strong> · <strong>Your alert</strong> · <strong>On duty</strong> · <strong>Overview</strong>
-</p>
+<table>
+  <tr>
+    <td width="50%" align="center"><img src="docs/screenshots/home.png" width="100%" alt="Home. Report an emergency or answer a Safety Check."><br><strong>Home</strong></td>
+    <td width="50%" align="center"><img src="docs/screenshots/report.png" width="100%" alt="What's happening. Pick fire, medical, a stuck lift, and the rest."><br><strong>What's happening</strong></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><img src="docs/screenshots/tracker.png" width="100%" alt="Your alert. See who is on the way."><br><strong>Your alert</strong></td>
+    <td width="50%" align="center"><img src="docs/screenshots/responder.png" width="100%" alt="On duty. Claim an alert and update it."><br><strong>On duty</strong></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/screenshots/admin.png" width="50%" alt="Overview. What is open, and who should go."><br><strong>Overview</strong></td>
+  </tr>
+</table>
 
 | Role | Main tasks |
 | --- | --- |
